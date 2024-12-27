@@ -1,102 +1,126 @@
 // Toast.tsx
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
   Animated,
+  StyleSheet,
+  Text,
   TouchableOpacity,
+  Dimensions,
+  Platform,
 } from 'react-native';
-import { X } from 'lucide-react-native';
-import { ToastProps, TOAST_TYPES } from './types';
-import { TOAST_ICONS } from './icons';
+import { ToastProps, ToastType } from './types';
+import { AlertCircle, CheckCircle, Info, XCircle } from 'lucide-react-native';
+
+const { width } = Dimensions.get('window');
 
 export const Toast: React.FC<ToastProps> = ({
-  visible,
   type = 'info',
   message,
-  icon,
-  duration = 3000,
   position = 'top',
-  onHide,
-  customStyle = {},
-  iconSize = 24,
+  icon,
+  iconSize = 20,
   iconColor,
+  customStyle,
+  messageStyle,
+  onHide,
+  index,
+  visible,
 }) => {
-  const translateY = React.useRef(new Animated.Value(-100)).current;
+  const translateY = useRef(new Animated.Value(-100)).current;
+  const opacity = useRef(new Animated.Value(0)).current;
+  const scale = useRef(new Animated.Value(0.8)).current;
 
   useEffect(() => {
     if (visible) {
-      showToast();
+      Animated.parallel([
+        Animated.timing(translateY, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scale, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
     }
   }, [visible]);
 
-  const showToast = () => {
-    Animated.sequence([
-      Animated.spring(translateY, {
-        toValue: 0,
+  const hideWithAnimation = () => {
+    Animated.parallel([
+      Animated.timing(translateY, {
+        toValue: -100,
+        duration: 200,
         useNativeDriver: true,
       }),
-      Animated.delay(duration),
-      Animated.spring(translateY, {
-        toValue: -100,
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scale, {
+        toValue: 0.8,
+        duration: 200,
         useNativeDriver: true,
       }),
     ]).start(() => {
-      onHide?.();
+      onHide();
     });
   };
 
-  const toastStyle = TOAST_TYPES[type];
-  const IconComponent = type !== 'custom' ? TOAST_ICONS[type] : null;
-  const finalIconColor = iconColor || toastStyle.iconColor;
+  const getToastStyle = (type: ToastType) => {
+    const styles = {
+      info: { bg: '#EFF6FF', text: '#1D4ED8', border: '#BFDBFE' },
+      success: { bg: '#F0FDF4', text: '#15803D', border: '#BBF7D0' },
+      error: { bg: '#FEF2F2', text: '#B91C1C', border: '#FECACA' },
+      warning: { bg: '#FFFBEB', text: '#B45309', border: '#FDE68A' },
+    };
+    return styles[type];
+  };
+
+  const colors = getToastStyle(type);
+  const offset = index * 80;
+
+  const IconComponent = {
+    info: Info,
+    success: CheckCircle,
+    error: XCircle,
+    warning: AlertCircle,
+  }[type];
 
   return (
     <Animated.View
       style={[
         styles.container,
         {
-          transform: [{ translateY }],
-          backgroundColor: toastStyle.backgroundColor,
-          ...(position === 'bottom' && { bottom: 0 }),
+          backgroundColor: colors.bg,
+          borderColor: colors.border,
+          transform: [
+            { translateY: Animated.add(translateY, new Animated.Value(offset)) },
+            { scale },
+          ],
+          opacity,
+          [position]: Platform.OS === 'ios' ? 50 : 20,
         },
         customStyle,
       ]}
     >
-      {/* Icon Section */}
-      <View style={styles.iconContainer}>
-        {icon ? (
-          // Custom icon if provided
-          typeof icon === 'function' ? (
-            React.createElement(icon, {
-              size: iconSize,
-              color: finalIconColor,
-            })
-          ) : (
-            icon
-          )
-        ) : (
-          // Default icon based on type
-          IconComponent && (
-            <IconComponent
-              size={iconSize}
-              color={finalIconColor}
-            />
-          )
-        )}
-      </View>
-
-      {/* Message */}
-      <Text style={[styles.message, { color: toastStyle.textColor }]}>
+      <IconComponent
+        size={iconSize}
+        color={iconColor || colors.text}
+        style={styles.icon}
+      />
+      <Text style={[styles.message, { color: colors.text }, messageStyle]}>
         {message}
       </Text>
-
-      {/* Close Button */}
-      <TouchableOpacity onPress={onHide} style={styles.closeButton}>
-        <X
-          size={18}
-          color={toastStyle.textColor}
-        />
+      <TouchableOpacity onPress={hideWithAnimation} style={styles.closeButton}>
+        <XCircle size={18} color={colors.text} />
       </TouchableOpacity>
     </Animated.View>
   );
@@ -105,29 +129,31 @@ export const Toast: React.FC<ToastProps> = ({
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
+    width: width - 32,
+    alignSelf: 'center',
+    maxWidth: 400,
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    margin: 16,
-    borderRadius: 8,
-    elevation: 5,
+    borderRadius: 12,
+    borderWidth: 1,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 5,
+    zIndex: 1000,
   },
-  iconContainer: {
+  icon: {
     marginRight: 12,
   },
   message: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 14,
+    fontWeight: '500',
   },
   closeButton: {
     marginLeft: 12,
