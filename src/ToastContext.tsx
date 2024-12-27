@@ -13,10 +13,15 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const showToast = useCallback((options: ToastOptions) => {
     setToastConfig({
+      type: options.type || 'info',
       message: options.message,
       duration: options.duration,
       position: options.position,
-      styles: options.styles,
+      icon: options.icon,
+      iconSize: options.iconSize,
+      iconColor: options.iconColor,
+      customStyle: options.customStyle,
+      messageStyle: options.messageStyle,
     });
     setVisible(true);
   }, []);
@@ -31,10 +36,15 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       {toastConfig && (
         <Toast
           visible={visible}
+          type={toastConfig.type}
           message={toastConfig.message}
           duration={toastConfig.duration}
           position={toastConfig.position}
-          styles={toastConfig.styles}
+          icon={toastConfig.icon}
+          iconSize={toastConfig.iconSize}
+          iconColor={toastConfig.iconColor}
+          customStyle={toastConfig.customStyle}
+          messageStyle={toastConfig.messageStyle}
           onHide={hideToast}
         />
       )}

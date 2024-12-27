@@ -1,140 +1,136 @@
-import React, { useEffect, useRef } from 'react';
+// Toast.tsx
+import React, { useEffect } from 'react';
 import {
-  Animated,
-  PanResponder,
-  StyleSheet,
+  View,
   Text,
-  Dimensions,
-  ViewStyle,
-  TextStyle,
+  StyleSheet,
+  Animated,
+  TouchableOpacity,
 } from 'react-native';
-import { ToastStyles } from './types';
-
-const { width } = Dimensions.get('window');
-
-interface ToastProps {
-  visible: boolean;
-  message: string;
-  duration?: number;
-  position?: 'top' | 'bottom';
-  onHide?: () => void;
-  styles?: ToastStyles;
-}
+import { X } from 'lucide-react-native';
+import { ToastProps, TOAST_TYPES } from './types';
+import { TOAST_ICONS } from './icons';
 
 export const Toast: React.FC<ToastProps> = ({
   visible,
+  type = 'info',
   message,
+  icon,
   duration = 3000,
-  position = 'bottom',
+  position = 'top',
   onHide,
-  styles = {},
+  customStyle = {},
+  iconSize = 24,
+  iconColor,
 }) => {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const translateY = useRef(new Animated.Value(position === 'top' ? -100 : 100)).current;
-  const swipeAnim = useRef(new Animated.Value(0)).current;
-  const swipeThreshold = styles.swipeThreshold || width * 0.3;
-
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: () => true,
-      onPanResponderMove: (_, gestureState) => {
-        swipeAnim.setValue(gestureState.dx);
-      },
-      onPanResponderRelease: (_, gestureState) => {
-        if (Math.abs(gestureState.dx) > swipeThreshold) {
-          Animated.timing(swipeAnim, {
-            toValue: gestureState.dx > 0 ? width : -width,
-            duration: 200,
-            useNativeDriver: true,
-          }).start(onHide);
-        } else {
-          Animated.spring(swipeAnim, {
-            toValue: 0,
-            useNativeDriver: true,
-          }).start();
-        }
-      },
-    })
-  ).current;
+  const translateY = React.useRef(new Animated.Value(-100)).current;
 
   useEffect(() => {
     if (visible) {
-      Animated.parallel([
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(translateY, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-      ]).start();
-
-      const timer = setTimeout(() => {
-        hideToast();
-      }, duration);
-
-      return () => clearTimeout(timer);
+      showToast();
     }
   }, [visible]);
 
-  const hideToast = () => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
+  const showToast = () => {
+    Animated.sequence([
+      Animated.spring(translateY, {
         toValue: 0,
-        duration: 300,
         useNativeDriver: true,
       }),
-      Animated.timing(translateY, {
-        toValue: position === 'top' ? -100 : 100,
-        duration: 300,
+      Animated.delay(duration),
+      Animated.spring(translateY, {
+        toValue: -100,
         useNativeDriver: true,
       }),
-    ]).start(onHide);
+    ]).start(() => {
+      onHide?.();
+    });
   };
 
-  const defaultContainerStyle: ViewStyle = {
-    position: 'absolute',
-    [position]: 50,
-    left: 20,
-    right: 20,
-    backgroundColor: '#333333',
-    borderRadius: 8,
-    padding: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  };
+  const toastStyle = TOAST_TYPES[type];
+  const IconComponent = type !== 'custom' ? TOAST_ICONS[type] : null;
+  const finalIconColor = iconColor || toastStyle.iconColor;
 
-  const defaultTextStyle: TextStyle = {
-    color: '#FFFFFF',
-    fontSize: 16,
-    textAlign: 'center',
-  };
-
-  return visible ? (
+  return (
     <Animated.View
-      {...panResponder.panHandlers}
       style={[
-        defaultContainerStyle,
         styles.container,
         {
-          opacity: fadeAnim,
-          transform: [
-            { translateY },
-            { translateX: swipeAnim },
-          ],
+          transform: [{ translateY }],
+          backgroundColor: toastStyle.backgroundColor,
+          ...(position === 'bottom' && { bottom: 0 }),
         },
+        customStyle,
       ]}
     >
-      <Text style={[defaultTextStyle, styles.text]}>{message}</Text>
+      {/* Icon Section */}
+      <View style={styles.iconContainer}>
+        {icon ? (
+          // Custom icon if provided
+          typeof icon === 'function' ? (
+            React.createElement(icon, {
+              size: iconSize,
+              color: finalIconColor,
+            })
+          ) : (
+            icon
+          )
+        ) : (
+          // Default icon based on type
+          IconComponent && (
+            <IconComponent
+              size={iconSize}
+              color={finalIconColor}
+            />
+          )
+        )}
+      </View>
+
+      {/* Message */}
+      <Text style={[styles.message, { color: toastStyle.textColor }]}>
+        {message}
+      </Text>
+
+      {/* Close Button */}
+      <TouchableOpacity onPress={onHide} style={styles.closeButton}>
+        <X
+          size={18}
+          color={toastStyle.textColor}
+        />
+      </TouchableOpacity>
     </Animated.View>
-  ) : null;
+  );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    margin: 16,
+    borderRadius: 8,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  iconContainer: {
+    marginRight: 12,
+  },
+  message: {
+    flex: 1,
+    fontSize: 16,
+  },
+  closeButton: {
+    marginLeft: 12,
+    padding: 4,
+  },
+});
