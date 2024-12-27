@@ -1,6 +1,6 @@
 {
   "name": "react-native-animated-toast-alerts",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "An animated toast component for React Native",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
