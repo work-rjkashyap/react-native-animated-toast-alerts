@@ -1,4 +1,3 @@
-// Toast.tsx
 import React, { useEffect, useRef } from 'react';
 import {
   Animated,
@@ -7,19 +6,20 @@ import {
   TouchableOpacity,
   Dimensions,
   Platform,
+  View,
+  PanResponder,
 } from 'react-native';
 import { ToastProps, ToastType } from './types';
-import { AlertCircle, CheckCircle, Info, XCircle } from 'lucide-react-native';
+import { AlertCircle, CheckCircle, Info, XCircle, LucideIcon } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
+const SWIPE_THRESHOLD = 50; // Amount of pixels to swipe before dismissing
 
 export const Toast: React.FC<ToastProps> = ({
   type = 'info',
   message,
   position = 'top',
   icon,
-  iconSize = 20,
-  iconColor,
   customStyle,
   messageStyle,
   onHide,
@@ -29,6 +29,39 @@ export const Toast: React.FC<ToastProps> = ({
   const translateY = useRef(new Animated.Value(-100)).current;
   const opacity = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(0.8)).current;
+  const swipeX = useRef(new Animated.Value(0)).current;
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: (_, gestureState) => {
+        // Only handle horizontal swipes
+        return Math.abs(gestureState.dx) > Math.abs(gestureState.dy);
+      },
+      onPanResponderMove: (_, gestureState) => {
+        swipeX.setValue(gestureState.dx);
+      },
+      onPanResponderRelease: (_, gestureState) => {
+        if (Math.abs(gestureState.dx) > SWIPE_THRESHOLD) {
+          // Swipe to dismiss
+          Animated.timing(swipeX, {
+            toValue: gestureState.dx > 0 ? width : -width,
+            duration: 200,
+            useNativeDriver: true,
+          }).start(() => {
+            onHide();
+          });
+        } else {
+          // Return to original position
+          Animated.spring(swipeX, {
+            toValue: 0,
+            useNativeDriver: true,
+            friction: 5,
+          }).start();
+        }
+      },
+    })
+  ).current;
 
   useEffect(() => {
     if (visible) {
@@ -84,26 +117,53 @@ export const Toast: React.FC<ToastProps> = ({
     return styles[type];
   };
 
+  const renderIcon = () => {
+    const colors = getToastStyle(type);
+
+    if (icon) {
+      const IconComponent = icon.icon;
+      return (
+        <IconComponent
+          size={icon.props?.size || 20}
+          color={icon.props?.color || colors.text}
+          {...icon.props}
+        />
+      );
+    }
+
+    const DefaultIcons: Record<ToastType, LucideIcon> = {
+      info: Info,
+      success: CheckCircle,
+      error: XCircle,
+      warning: AlertCircle,
+    };
+
+    const DefaultIcon = DefaultIcons[type];
+    return <DefaultIcon size={20} color={colors.text} />;
+  };
+
   const colors = getToastStyle(type);
   const offset = index * 80;
 
-  const IconComponent = {
-    info: Info,
-    success: CheckCircle,
-    error: XCircle,
-    warning: AlertCircle,
-  }[type];
+  // Calculate rotation based on swipe
+  const rotate = swipeX.interpolate({
+    inputRange: [-width, 0, width],
+    outputRange: ['10deg', '0deg', '-10deg'],
+  });
 
   return (
     <Animated.View
+      {...panResponder.panHandlers}
       style={[
         styles.container,
         {
           backgroundColor: colors.bg,
           borderColor: colors.border,
           transform: [
+            { translateX: swipeX },
             { translateY: Animated.add(translateY, new Animated.Value(offset)) },
             { scale },
+            { rotate },
           ],
           opacity,
           [position]: Platform.OS === 'ios' ? 50 : 20,
@@ -111,11 +171,7 @@ export const Toast: React.FC<ToastProps> = ({
         customStyle,
       ]}
     >
-      <IconComponent
-        size={iconSize}
-        color={iconColor || colors.text}
-        style={styles.icon}
-      />
+      <View style={styles.icon}>{renderIcon()}</View>
       <Text style={[styles.message, { color: colors.text }, messageStyle]}>
         {message}
       </Text>
