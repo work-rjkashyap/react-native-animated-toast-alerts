@@ -1,0 +1,17 @@
+# Development files
+example/
+node_modules/
+src/
+tests/
+.github/
+.git/
+.gitignore
+.prettierrc
+.eslintrc
+tsconfig.json
+jest.config.js
+
+# Build artifacts
+coverage/
+*.log
+.DS_Store

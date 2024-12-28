@@ -1,38 +1,37 @@
-// types.ts
-import { StyleProp, TextStyle, ViewStyle } from 'react-native';
+import { ViewStyle, TextStyle } from 'react-native';
 import { LucideIcon } from 'lucide-react-native';
 
 export type ToastType = 'info' | 'success' | 'error' | 'warning';
+
 export type ToastPosition = 'top' | 'bottom';
 
-// Custom type for icon props
-export type ToastIcon = {
-  icon: LucideIcon | React.ComponentType<any>;  // Updated type definition
+export interface ToastIconProps {
+  icon: LucideIcon;
   props?: {
     size?: number;
     color?: string;
     [key: string]: any;
   };
-};
+}
 
 export interface ToastOptions {
   type?: ToastType;
   message: string;
   duration?: number;
   position?: ToastPosition;
-  icon?: ToastIcon;
-  customStyle?: StyleProp<ViewStyle>;
-  messageStyle?: StyleProp<TextStyle>;
+  icon?: ToastIconProps;
+  customStyle?: ViewStyle;
+  messageStyle?: TextStyle;
 }
 
 export interface ToastProps extends ToastOptions {
   visible: boolean;
   onHide: () => void;
   index: number;
-  id: string;
 }
 
 export interface ToastContextType {
-  showToast: (options: ToastOptions) => void;
-  hideToast: (id?: string) => void;
+  showToast: (options: ToastOptions) => string;
+  hideToast: (id: string) => void;
+  hideAll: () => void;  // Added this line to fix the error
 }

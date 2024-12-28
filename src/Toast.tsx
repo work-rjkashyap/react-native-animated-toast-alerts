@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import {
   Animated,
   StyleSheet,
@@ -8,12 +8,13 @@ import {
   Platform,
   View,
   PanResponder,
+  Easing,
 } from 'react-native';
 import { ToastProps, ToastType } from './types';
 import { AlertCircle, CheckCircle, Info, XCircle, LucideIcon } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
-const SWIPE_THRESHOLD = 50; // Amount of pixels to swipe before dismissing
+const SWIPE_THRESHOLD = 50;
 
 export const Toast: React.FC<ToastProps> = ({
   type = 'info',
@@ -31,101 +32,170 @@ export const Toast: React.FC<ToastProps> = ({
   const scale = useRef(new Animated.Value(0.8)).current;
   const swipeX = useRef(new Animated.Value(0)).current;
 
-  const panResponder = useRef(
+  // Track whether the toast is being dismissed
+  const isDismissing = useRef(false);
+
+  const panResponder = useMemo(() =>
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: (_, gestureState) => {
-        // Only handle horizontal swipes
         return Math.abs(gestureState.dx) > Math.abs(gestureState.dy);
       },
       onPanResponderMove: (_, gestureState) => {
-        swipeX.setValue(gestureState.dx);
+        // Add resistance to the swipe as it moves further
+        const dx = gestureState.dx;
+        const resistance = 0.5;
+        const resistedDx = dx > 0
+          ? Math.min(width, dx * resistance)
+          : Math.max(-width, dx * resistance);
+        swipeX.setValue(resistedDx);
       },
       onPanResponderRelease: (_, gestureState) => {
-        if (Math.abs(gestureState.dx) > SWIPE_THRESHOLD) {
-          // Swipe to dismiss
-          Animated.timing(swipeX, {
-            toValue: gestureState.dx > 0 ? width : -width,
-            duration: 200,
-            useNativeDriver: true,
-          }).start(() => {
+        if (isDismissing.current) return;
+
+        const velocity = gestureState.vx;
+        const shouldDismiss =
+          Math.abs(gestureState.dx) > SWIPE_THRESHOLD ||
+          Math.abs(velocity) > 0.5;
+
+        if (shouldDismiss) {
+          isDismissing.current = true;
+          const toValue = gestureState.dx > 0 ? width : -width;
+
+          Animated.sequence([
+            // First, complete the swipe with spring animation
+            Animated.spring(swipeX, {
+              toValue,
+              useNativeDriver: true,
+              velocity: velocity * 2,
+              tension: 40,
+              friction: 7,
+            }),
+            // Then fade out
+            Animated.timing(opacity, {
+              toValue: 0,
+              duration: 150,
+              useNativeDriver: true,
+              easing: Easing.out(Easing.ease),
+            })
+          ]).start(() => {
             onHide();
           });
         } else {
-          // Return to original position
+          // Return to center with spring animation
           Animated.spring(swipeX, {
             toValue: 0,
             useNativeDriver: true,
-            friction: 5,
+            velocity: velocity,
+            tension: 50,
+            friction: 7,
           }).start();
         }
       },
-    })
-  ).current;
+    }), []);
 
   useEffect(() => {
     if (visible) {
+      isDismissing.current = false;
       Animated.parallel([
-        Animated.timing(translateY, {
+        Animated.spring(translateY, {
           toValue: 0,
-          duration: 300,
           useNativeDriver: true,
+          tension: 50,
+          friction: 7,
         }),
         Animated.timing(opacity, {
           toValue: 1,
-          duration: 300,
+          duration: 250,
           useNativeDriver: true,
+          easing: Easing.out(Easing.ease),
         }),
-        Animated.timing(scale, {
+        Animated.spring(scale, {
           toValue: 1,
-          duration: 300,
           useNativeDriver: true,
+          tension: 50,
+          friction: 7,
         }),
       ]).start();
     }
   }, [visible]);
 
   const hideWithAnimation = () => {
+    if (isDismissing.current) return;
+    isDismissing.current = true;
+
     Animated.parallel([
       Animated.timing(translateY, {
         toValue: -100,
-        duration: 200,
+        duration: 250,
         useNativeDriver: true,
+        easing: Easing.in(Easing.ease),
       }),
       Animated.timing(opacity, {
         toValue: 0,
         duration: 200,
         useNativeDriver: true,
       }),
-      Animated.timing(scale, {
+      Animated.spring(scale, {
         toValue: 0.8,
-        duration: 200,
         useNativeDriver: true,
+        tension: 50,
+        friction: 7,
       }),
     ]).start(() => {
       onHide();
     });
   };
 
-  const getToastStyle = (type: ToastType) => {
-    const styles = {
-      info: { bg: '#EFF6FF', text: '#1D4ED8', border: '#BFDBFE' },
-      success: { bg: '#F0FDF4', text: '#15803D', border: '#BBF7D0' },
-      error: { bg: '#FEF2F2', text: '#B91C1C', border: '#FECACA' },
-      warning: { bg: '#FFFBEB', text: '#B45309', border: '#FDE68A' },
-    };
-    return styles[type];
-  };
+  // Calculate rotation based on swipe with damping
+  const rotate = swipeX.interpolate({
+    inputRange: [-width, 0, width],
+    outputRange: ['4deg', '0deg', '-4deg'],
+    extrapolate: 'clamp',
+  });
+
+  // Calculate scale reduction as toast is swiped
+  const swipeScale = swipeX.interpolate({
+    inputRange: [-width, 0, width],
+    outputRange: [0.9, 1, 0.9],
+    extrapolate: 'clamp',
+  });
+
+  const getToastStyle = (type: ToastType) => ({
+ info: {
+  bg: '#2563EB', // Blue
+  text: '#FFFFFF', // White
+  border: '#1E40AF', // Dark Blue
+  shadow: 'rgba(37, 99, 235, 0.5)' // Blue Shadow
+},
+success: {
+  bg: '#16A34A', // Green
+  text: '#FFFFFF', // White
+  border: '#15803D', // Dark Green
+  shadow: 'rgba(22, 163, 74, 0.5)' // Green Shadow
+},
+error: {
+  bg: '#DC2626', // Red
+  text: '#FFFFFF', // White
+  border: '#991B1B', // Dark Red
+  shadow: 'rgba(220, 38, 38, 0.5)' // Red Shadow
+},
+warning: {
+  bg: '#F59E0B', // Amber
+  text: '#FFFFFF', // White
+  border: '#B45309', // Dark Amber
+  shadow: 'rgba(245, 158, 11, 0.5)' // Amber Shadow
+}
+
+  }[type]);
 
   const renderIcon = () => {
-    const colors = getToastStyle(type);
-
     if (icon) {
       const IconComponent = icon.icon;
       return (
         <IconComponent
           size={icon.props?.size || 20}
-          color={icon.props?.color || colors.text}
+          color={icon.props?.color || getToastStyle(type).text}
           {...icon.props}
         />
       );
@@ -139,17 +209,23 @@ export const Toast: React.FC<ToastProps> = ({
     };
 
     const DefaultIcon = DefaultIcons[type];
-    return <DefaultIcon size={20} color={colors.text} />;
+    return <DefaultIcon size={20} color={getToastStyle(type).text} />;
   };
 
+  const offset = index * 70;
   const colors = getToastStyle(type);
-  const offset = index * 80;
 
-  // Calculate rotation based on swipe
-  const rotate = swipeX.interpolate({
-    inputRange: [-width, 0, width],
-    outputRange: ['10deg', '0deg', '-10deg'],
-  });
+
+
+  const animatedStyle = {
+    transform: [
+      { translateX: swipeX },
+      { translateY: Animated.add(translateY, new Animated.Value(offset)) },
+      { scale },
+      { rotate },
+    ],
+    opacity,
+  };
 
   return (
     <Animated.View
@@ -159,25 +235,34 @@ export const Toast: React.FC<ToastProps> = ({
         {
           backgroundColor: colors.bg,
           borderColor: colors.border,
+          [position]: Platform.OS === 'ios' ? 50 : 20,
+        },
+        {
           transform: [
             { translateX: swipeX },
             { translateY: Animated.add(translateY, new Animated.Value(offset)) },
-            { scale },
+            { scale: Animated.multiply(scale, swipeScale) },
             { rotate },
           ],
           opacity,
-          [position]: Platform.OS === 'ios' ? 50 : 20,
         },
         customStyle,
       ]}
     >
-      <View style={styles.icon}>{renderIcon()}</View>
-      <Text style={[styles.message, { color: colors.text }, messageStyle]}>
-        {message}
-      </Text>
-      <TouchableOpacity onPress={hideWithAnimation} style={styles.closeButton}>
-        <XCircle size={18} color={colors.text} />
-      </TouchableOpacity>
+      <View style={styles.contentContainer}>
+        <View style={styles.iconContainer}>{renderIcon()}</View>
+        <Text
+          style={[
+            styles.message,
+            { color: colors.text },
+            messageStyle
+          ]}
+          numberOfLines={2}
+        >
+          {message}
+        </Text>
+
+      </View>
     </Animated.View>
   );
 };
@@ -188,28 +273,28 @@ const styles = StyleSheet.create({
     width: width - 32,
     alignSelf: 'center',
     maxWidth: 400,
+    borderRadius: 16,
+    borderWidth: 1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+    zIndex: 1000,
+    overflow: 'hidden',
+  },
+  contentContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 5,
-    zIndex: 1000,
   },
-  icon: {
+  iconContainer: {
     marginRight: 12,
   },
   message: {
     flex: 1,
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '600',
+    lineHeight: 20,
   },
   closeButton: {
     marginLeft: 12,

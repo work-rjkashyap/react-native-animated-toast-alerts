@@ -2,13 +2,16 @@
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
+    "lib": ["es2015", "es2016", "es2017", "dom"],
+    "jsx": "react-native",
     "declaration": true,
     "outDir": "./lib",
     "strict": true,
-    "jsx": "react-native",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
     "skipLibCheck": true,
-    "esModuleInterop": true
+    "forceConsistentCasingInFileNames": true
   },
   "include": ["src"],
-  "exclude": ["node_modules", "lib"]
+  "exclude": ["node_modules", "example", "lib"]
 }
