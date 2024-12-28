@@ -13,7 +13,7 @@ import {
 import { ToastProps, ToastType } from './types';
 import { AlertCircle, CheckCircle, Info, XCircle, LucideIcon } from 'lucide-react-native';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 const SWIPE_THRESHOLD = 50;
 
 export const Toast: React.FC<ToastProps> = ({
@@ -162,31 +162,30 @@ export const Toast: React.FC<ToastProps> = ({
   });
 
   const getToastStyle = (type: ToastType) => ({
- info: {
-  bg: '#2563EB', // Blue
-  text: '#FFFFFF', // White
-  border: '#1E40AF', // Dark Blue
-  shadow: 'rgba(37, 99, 235, 0.5)' // Blue Shadow
-},
-success: {
-  bg: '#16A34A', // Green
-  text: '#FFFFFF', // White
-  border: '#15803D', // Dark Green
-  shadow: 'rgba(22, 163, 74, 0.5)' // Green Shadow
-},
-error: {
-  bg: '#DC2626', // Red
-  text: '#FFFFFF', // White
-  border: '#991B1B', // Dark Red
-  shadow: 'rgba(220, 38, 38, 0.5)' // Red Shadow
-},
-warning: {
-  bg: '#F59E0B', // Amber
-  text: '#FFFFFF', // White
-  border: '#B45309', // Dark Amber
-  shadow: 'rgba(245, 158, 11, 0.5)' // Amber Shadow
-}
-
+    info: {
+      bg: '#2563EB', // Blue
+      text: '#FFFFFF', // White
+      border: '#1E40AF', // Dark Blue
+      shadow: 'rgba(37, 99, 235, 0.5)' // Blue Shadow
+    },
+    success: {
+      bg: '#16A34A', // Green
+      text: '#FFFFFF', // White
+      border: '#15803D', // Dark Green
+      shadow: 'rgba(22, 163, 74, 0.5)' // Green Shadow
+    },
+    error: {
+      bg: '#DC2626', // Red
+      text: '#FFFFFF', // White
+      border: '#991B1B', // Dark Red
+      shadow: 'rgba(220, 38, 38, 0.5)' // Red Shadow
+    },
+    warning: {
+      bg: '#F59E0B', // Amber
+      text: '#FFFFFF', // White
+      border: '#B45309', // Dark Amber
+      shadow: 'rgba(245, 158, 11, 0.5)' // Amber Shadow
+    }
   }[type]);
 
   const renderIcon = () => {
@@ -215,8 +214,6 @@ warning: {
   const offset = index * 70;
   const colors = getToastStyle(type);
 
-
-
   const animatedStyle = {
     transform: [
       { translateX: swipeX },
@@ -235,7 +232,8 @@ warning: {
         {
           backgroundColor: colors.bg,
           borderColor: colors.border,
-          [position]: Platform.OS === 'ios' ? 50 : 20,
+          [position]: position === 'center' ? undefined : (Platform.OS === 'ios' ? 50 : 20),
+          top: position === 'center' ? height / 2 - 50 : undefined,
         },
         {
           transform: [
@@ -261,7 +259,6 @@ warning: {
         >
           {message}
         </Text>
-
       </View>
     </Animated.View>
   );

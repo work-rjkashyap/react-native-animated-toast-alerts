@@ -8,6 +8,7 @@ tests/
 .gitignore
 .prettierrc
 .eslintrc
+android
 tsconfig.json
 jest.config.js
 
@@ -15,3 +16,4 @@ jest.config.js
 coverage/
 *.log
 .DS_Store
+*.tgz
