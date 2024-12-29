@@ -2,90 +2,92 @@
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-90.3%25-blue)
 ![Java](https://img.shields.io/badge/Java-9.7%25-orange)
+![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-A modern, highly customizable animated toast notification library for React Native applications with smooth animations, gesture support, and TypeScript compatibility.
+A modern, highly customizable animated toast notification library for React Native featuring Sonner-style stacking animations, gesture support, and comprehensive TypeScript compatibility.
 
-## Features
+<div align="center">
 
-- 🎨 **Fully Customizable** - Customize colors, styles, positions, and animations
-- 🎯 **Multiple Toast Types** - Built-in support for info, success, error, and warning toasts
-- 💫 **Smooth Animations** - Beautiful entrance and exit animations
-- 👆 **Gesture Support** - Swipe-to-dismiss functionality
-- 🔧 **TypeScript Support** - Full TypeScript support with type definitions
-- 📱 **Cross-Platform** - Works on both iOS and Android
-- 🎁 **Icon Support** - Integration with Lucide icons
-- ⚡ **Performance Optimized** - Uses React Native's Animated API for smooth performance
+  <p align="center">
+    <a href="#installation">Installation</a> •
+    <a href="#usage">Usage</a> •
+    <a href="#customization">Customization</a> •
+    <a href="#api">API</a>
+  </p>
+</div>
 
-## Installation
+## ✨ Features
 
-### 1. Install the main package
+- 🎨 **Modern Design** - Clean, minimalist interface with smooth animations
+- 🔄 **Sonner-Style Stacking** - Beautiful entrance and exit animations with proper stacking
+- 🌓 **Theme Integration** - Seamless dark mode support with customizable themes
+- 📱 **Multiple Positions** - Support for top, bottom, and center positions
+- 👆 **Advanced Gestures** - Intuitive swipe-to-dismiss with natural physics
+- 💅 **Flexible Styling** - Extensive customization options for colors, icons, and animations
+- 🔧 **TypeScript Support** - Comprehensive type definitions for better development
+- ⚡ **Performance Optimized** - Efficient animations using React Native's Animated API
+- 🎁 **Icon Integration** - Seamless support for Lucide icons
+
+## 🚀 Installation
+
+### 1. Install the package and dependencies
 
 ```bash
-npm install react-native-animated-toast-alerts
-# or
-yarn add react-native-animated-toast-alerts
+# Using npm
+npm install react-native-animated-toast-alerts lucide-react-native react-native-svg
+
+# Using yarn
+yarn add react-native-animated-toast-alerts lucide-react-native react-native-svg
+
+# Using pnpm
+pnpm add react-native-animated-toast-alerts lucide-react-native react-native-svg
 ```
 
-### 2. Install required dependencies
-
-The library requires the following peer dependencies:
-
-```bash
-# Install Lucide React Native for icons
-npm install lucide-react-native
-# or
-yarn add lucide-react-native
-
-# Install React Native SVG (required by Lucide React Native)
-npm install react-native-svg
-# or
-yarn add react-native-svg
-```
-
-### 3. iOS Setup (Pod Install)
-
-For iOS, you need to install the pods:
-
+### 2. iOS Setup
 ```bash
 cd ios && pod install && cd ..
 ```
 
-## Setup
+## 🎯 Quick Start
+
+### Set up the Provider
 
 Wrap your application with the `ToastProvider`:
 
-```tsx
+```typescript
 import { ToastProvider } from 'react-native-animated-toast-alerts';
 
-const App = () => (
-  <ToastProvider>
-    <YourApp />
-  </ToastProvider>
-);
+const App = () => {
+  return (
+    <ToastProvider>
+      <YourApp />
+    </ToastProvider>
+  );
+};
 
 export default App;
 ```
 
-## Basic Usage
+### Using the Toast
 
-```tsx
+```typescript
 import { useToast } from 'react-native-animated-toast-alerts';
-import { Info } from 'lucide-react-native'; // Import icons from Lucide
+import { Camera } from 'lucide-react-native';
 
 const MyComponent = () => {
   const { showToast } = useToast();
 
   const handlePress = () => {
     showToast({
-      message: "Hello World!",
-      type: "success",
-      position: "top",
-      duration: 3000,
+      type: 'success',
+      message: '✨ Operation completed!',
+      position: 'top',
       icon: {
-        icon: Info,
+        icon: Camera,
         props: {
           size: 24,
-          color: "#1D4ED8"
+          color: '#16A34A'
         }
       }
     });
@@ -95,158 +97,124 @@ const MyComponent = () => {
 };
 ```
 
-## API Reference
-
-### Toast Options
+## 🎨 Toast Types
 
 ```typescript
-interface ToastOptions {
-  type?: 'info' | 'success' | 'error' | 'warning';
-  message: string;
-  duration?: number;
-  position?: 'top' | 'bottom';
-  icon?: {
-    icon: LucideIcon | React.ComponentType<any>;
-    props?: {
-      size?: number;
-      color?: string;
-      [key: string]: any;
-    };
-  };
-  customStyle?: StyleProp<ViewStyle>;
-  messageStyle?: StyleProp<TextStyle>;
-}
-```
-
-### Built-in Icons
-
-The library uses Lucide React Native icons. Here are some commonly used icons for different toast types:
-
-```tsx
-import {
-  AlertCircle,  // for warning
-  CheckCircle,  // for success
-  Info,         // for info
-  XCircle      // for error
-} from 'lucide-react-native';
-
-// Usage example
+// ℹ️ Info toast
 showToast({
-  message: "Success!",
-  type: "success",
-  icon: {
-    icon: CheckCircle,
-    props: {
-      size: 24,
-      color: "#15803D"
-    }
-  }
+  type: 'info',
+  message: 'Updates available',
+});
+
+// ✅ Success toast
+showToast({
+  type: 'success',
+  message: 'Changes saved!',
+});
+
+// ❌ Error toast
+showToast({
+  type: 'error',
+  message: 'Something went wrong',
+});
+
+// ⚠️ Warning toast
+showToast({
+  type: 'warning',
+  message: 'Please review input',
 });
 ```
 
-### Style Customization
+## 💅 Customization
 
-```tsx
+### Styling Options
+
+```typescript
 showToast({
-  message: "Custom styled toast!",
-  type: "success",
-  position: "bottom",
+  type: 'info',
+  message: 'Custom styled toast',
+  position: 'center',
   customStyle: {
-    backgroundColor: '#4CAF50',
-    borderRadius: 25,
-    paddingVertical: 20,
+    borderRadius: 12,
+    backgroundColor: '#F8FAFC',
   },
   messageStyle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
-    color: '#FFFFFF',
   },
 });
 ```
-
-### Built-in Toast Types
-
-The library comes with four pre-defined toast types:
-- `info` - Blue theme
-- `success` - Green theme
-- `error` - Red theme
-- `warning` - Yellow theme
-
-### Gesture Support
-
-The toast notifications support swipe-to-dismiss functionality with a threshold of 50 pixels. Users can swipe left or right to dismiss the toast.
-
-## Advanced Usage
 
 ### Custom Icons
 
-```tsx
+```typescript
 import { AlertCircle } from 'lucide-react-native';
 
 showToast({
-  message: "Custom icon toast",
-  type: "info",
+  type: 'info',
+  message: 'Custom icon toast',
   icon: {
     icon: AlertCircle,
     props: {
       size: 24,
-      color: "#1D4ED8",
+      color: '#1D4ED8',
       strokeWidth: 2
     }
   }
 });
 ```
 
-### Multiple Toasts
+## 📚 API Reference
 
-The library handles multiple toasts automatically, stacking them in the order they were created.
+### ToastOptions
 
-```tsx
-const showMultipleToasts = () => {
-  showToast({ message: "First Toast", type: "info" });
-  showToast({ message: "Second Toast", type: "success" });
-  showToast({ message: "Third Toast", type: "warning" });
+```typescript
+interface ToastOptions {
+  type?: 'info' | 'success' | 'error' | 'warning';
+  message: string;
+  duration?: number;
+  position?: 'top' | 'bottom' | 'center';
+  icon?: ToastIcon;
+  customStyle?: StyleProp<ViewStyle>;
+  messageStyle?: StyleProp<TextStyle>;
+}
+
+type ToastIcon = {
+  icon: LucideIcon | React.ComponentType<any>;
+  props?: {
+    size?: number;
+    color?: string;
+    [key: string]: any;
+  };
 };
 ```
 
-## Performance Considerations
 
-- Uses React Native's Animated API for optimal performance
-- Implements proper cleanup of animations and timeouts
-- Efficiently handles multiple toast notifications
-- Optimized SVG rendering through react-native-svg
 
-## Troubleshooting
+## 📱 Platform Specific Features
 
-### Common Issues
+The library provides optimized experiences for both platforms:
 
-1. If icons are not displaying:
-   - Ensure `react-native-svg` is properly installed and linked
-   - For iOS, run `pod install` in the iOS directory
-   - For Android, rebuild the project
+- **iOS**: Native shadows, safe area handling, and smooth animations
+- **Android**: Material Design elevation and touch feedback
+- **Both**: Natural gesture interactions and proper theme integration
 
-2. If animations are not smooth:
-   - Ensure you're using the latest version of react-native
-   - Try enabling hermes engine for better performance
+## 🔧 Technical Requirements
 
-## Contributing
+- React Native >= 0.63.0
+- React >= 16.8.0
+- TypeScript >= 4.0.0 (for TypeScript users)
 
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+## 🤝 Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+Contributions are welcome! Please feel free to submit issues and pull requests.
 
-## License
+## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Author
-
-[work-rjkashyap](https://github.com/work-rjkashyap)
+MIT © [Rajeshwar Kashyap](https://github.com/work-rjkashyap)
 
 ---
 
-Made with ❤️ for the React Native community.
+<p align="center">
+  Made with ❤️ by Rajeshwar Kashyap
+</p>

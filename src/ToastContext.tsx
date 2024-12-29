@@ -1,40 +1,38 @@
-import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
-import { View } from 'react-native';
+import React, { createContext, useContext, useCallback, useState } from 'react';
+import { useColorScheme } from 'react-native';
+import { ToastContextType, ToastTheme, ToastProps, ToastOptions } from './types';
+import { defaultTheme } from './theme';
 import { Toast } from './Toast';
-import { ToastOptions, ToastContextType, ToastProps } from './types';
 
-// Updated default context value to match types
 const ToastContext = createContext<ToastContextType>({
-  showToast: (_: ToastOptions) => '', // Return empty string as default
-  hideToast: (_: string) => {},
-  hideAll: () => {},
+  showToast: () => {},
+  hideToast: () => {},
+});
+const MAX_TOASTS = 5;
+
+export const ToastThemeContext = createContext<{ theme: ToastTheme; colorScheme: 'light' | 'dark' }>({
+  theme: defaultTheme,
+  colorScheme: 'light',
 });
 
-const MAX_TOASTS = 5;
+export const ToastThemeProvider: React.FC<{ children: React.ReactNode; theme?: ToastTheme }> = ({
+  children,
+  theme = defaultTheme,
+}) => {
+  const colorScheme = useColorScheme() || 'light';
+
+  return (
+    <ToastThemeContext.Provider value={{ theme, colorScheme }}>
+      {children}
+    </ToastThemeContext.Provider>
+  );
+};
 
 export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [toasts, setToasts] = useState<(Omit<ToastProps, 'visible' | 'onHide'> & { id: string })[]>([]);
-  const timeoutIds = useRef<Record<string, NodeJS.Timeout>>({});
 
-  const clearTimeout = useCallback((id: string) => {
-    if (timeoutIds.current[id]) {
-      global.clearTimeout(timeoutIds.current[id]);
-      delete timeoutIds.current[id];
-    }
-  }, []);
-
-  const hideAll = useCallback(() => {
-    Object.keys(timeoutIds.current).forEach(clearTimeout);
-    setToasts([]);
-  }, []);
-
-  const hideToast = useCallback((id: string) => {
-    clearTimeout(id);
-    setToasts(prev => prev.filter(toast => toast.id !== id));
-  }, []);
-
-  const showToast = useCallback((options: ToastOptions): string => {
-    const id = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const showToast = useCallback((options: ToastOptions) => {
+    const id = Date.now().toString();
 
     setToasts(prev => {
       const updatedToasts = [
@@ -56,30 +54,29 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return updatedToasts;
     });
 
-    if (options.duration !== 0) {
-      const duration = options.duration || 3000;
-      timeoutIds.current[id] = setTimeout(() => {
-        hideToast(id);
-      }, duration);
+    if (options.duration !== undefined && options.duration > 0) {
+      setTimeout(() => {
+        setToasts((prev) => prev.filter((toast) => toast.id !== id));
+      }, options.duration);
     }
+  }, []);
 
-    return id;  // Explicitly return the id string
+  const hideToast = useCallback(() => {
+    setToasts((prev) => prev.slice(1));
   }, []);
 
   return (
-    <ToastContext.Provider value={{ showToast, hideToast, hideAll }}>
-      <View style={{ flex: 1 }}>
-        {children}
-        {toasts.map((toast, index) => (
-          <Toast
-            key={toast.id}
-            {...toast}
-            visible
-            onHide={() => hideToast(toast.id)}
-            index={index}
-          />
-        ))}
-      </View>
+    <ToastContext.Provider value={{ showToast, hideToast }}>
+      {children}
+      {toasts.map((toast, index) => (
+        <Toast
+          key={toast.id}
+          {...toast}
+          visible
+          onHide={() => setToasts(prev => prev.filter(t => t.id !== toast.id))}
+          index={index}
+        />
+      ))}
     </ToastContext.Provider>
   );
 };
@@ -88,6 +85,14 @@ export const useToast = () => {
   const context = useContext(ToastContext);
   if (!context) {
     throw new Error('useToast must be used within a ToastProvider');
+  }
+  return context;
+};
+
+export const useToastTheme = () => {
+  const context = useContext(ToastThemeContext);
+  if (!context) {
+    throw new Error('useToastTheme must be used within a ToastThemeProvider');
   }
   return context;
 };
