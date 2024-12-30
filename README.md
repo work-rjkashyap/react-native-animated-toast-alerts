@@ -8,6 +8,7 @@
 A modern, highly customizable animated toast notification library for React Native featuring Sonner-style stacking animations, gesture support, and comprehensive TypeScript compatibility.
 
 <div align="center">
+<img src="https://socialify.git.ci/work-rjkashyap/react-native-animated-toast-alerts/image?font=Raleway&forks=1&issues=1&language=1&name=1&owner=1&pulls=1&stargazers=1&theme=Light" alt="react-native-animated-toast-alerts" width="640" height="320" />
 
   <p align="center">
     <a href="#installation">Installation</a> •
