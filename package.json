@@ -19,6 +19,7 @@
     "type": "git",
     "url": "https://github.com/work-rjkashyap/react-native-animated-toast-alerts.git"
   },
+"homepage": "https://work-rjkashyap.github.io/react-native-animated-toast-alerts",
   "author": "Rajeshwar Kashyap",
   "license": "MIT",
   "peerDependencies": {
