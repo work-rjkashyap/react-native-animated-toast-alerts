@@ -11,7 +11,7 @@ A modern, highly customizable animated toast notification library for React Nati
 <img src="https://socialify.git.ci/work-rjkashyap/react-native-animated-toast-alerts/image?font=Raleway&forks=1&issues=1&language=1&name=1&owner=1&pulls=1&stargazers=1&theme=Light" alt="react-native-animated-toast-alerts" width="640" height="320" />
 
   <p align="center">
-    <a href="#installation">Installation</a> •
+    <a href="📚 API Reference">Installation</a> •
     <a href="#usage">Usage</a> •
     <a href="#customization">Customization</a> •
     <a href="#api">API</a>
