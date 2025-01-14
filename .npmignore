@@ -4,6 +4,7 @@ src/
 tests/
 .github/
 .git/
+example/
 .gitignore
 .prettierrc
 .eslintrc
