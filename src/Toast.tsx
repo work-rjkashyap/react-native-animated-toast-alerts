@@ -16,7 +16,7 @@ const { width } = Dimensions.get('window');
 const TOAST_HEIGHT = 64;
 const SWIPE_THRESHOLD = 50;
 const MAX_VISIBLE_TOASTS = 3;
-const STACK_OFFSET = 12;
+const OFFSET_PER_TOAST = 4;
 
 export const Toast: React.FC<ToastProps> = ({
   type = 'info',
@@ -30,32 +30,50 @@ export const Toast: React.FC<ToastProps> = ({
   visible,
 }) => {
   const { theme, colorScheme } = useToastTheme();
-  const translateY = useRef(new Animated.Value(position === 'bottom' ? TOAST_HEIGHT : -TOAST_HEIGHT)).current;
+  const translateY = useRef(
+    new Animated.Value(position === 'bottom' ? TOAST_HEIGHT : -TOAST_HEIGHT)
+  ).current;
   const opacity = useRef(new Animated.Value(0)).current;
-  const scale = useRef(new Animated.Value(0.9)).current;
+  const scale = useRef(new Animated.Value(0.95)).current;
   const swipeX = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (visible) {
       const isWithinViewLimit = index < MAX_VISIBLE_TOASTS;
-      const stackPosition = position === 'bottom' ? -index * STACK_OFFSET : index * STACK_OFFSET;
+      const offset = index * OFFSET_PER_TOAST;
+      const direction = position === 'bottom' ? -1 : 1;
 
       Animated.parallel([
         Animated.spring(translateY, {
-          toValue: isWithinViewLimit ? stackPosition : (position === 'bottom' ? TOAST_HEIGHT : -TOAST_HEIGHT),
+          toValue: isWithinViewLimit ? (offset * direction) : (position === 'bottom' ? TOAST_HEIGHT : -TOAST_HEIGHT),
           useNativeDriver: true,
-          tension: 50,
-          friction: 10,
+          tension: 70,
+          friction: 12,
+          velocity: 1,
         }),
         Animated.timing(opacity, {
           toValue: isWithinViewLimit ? 1 - (index * 0.15) : 0,
-          duration: 200,
+          duration: 150,
           useNativeDriver: true,
         }),
         Animated.spring(scale, {
-          toValue: isWithinViewLimit ? 1 - (index * 0.03) : 0.9,
+          toValue: isWithinViewLimit ? 1 - (index * 0.02) : 0.95,
           useNativeDriver: true,
-          tension: 50,
+          tension: 100,
+          friction: 10,
+        }),
+      ]).start();
+    } else {
+      Animated.parallel([
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+        Animated.spring(translateY, {
+          toValue: position === 'bottom' ? TOAST_HEIGHT : -TOAST_HEIGHT,
+          useNativeDriver: true,
+          tension: 100,
           friction: 10,
         }),
       ]).start();
@@ -66,17 +84,19 @@ export const Toast: React.FC<ToastProps> = ({
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: (_, gestureState) => {
-        return Math.abs(gestureState.dx) > Math.abs(gestureState.dy);
+        return Math.abs(gestureState.dx) > 5;
       },
       onPanResponderMove: (_, gestureState) => {
         swipeX.setValue(gestureState.dx);
       },
       onPanResponderRelease: (_, gestureState) => {
         if (Math.abs(gestureState.dx) > SWIPE_THRESHOLD) {
-          Animated.timing(swipeX, {
+          Animated.spring(swipeX, {
             toValue: gestureState.dx > 0 ? width : -width,
-            duration: 200,
             useNativeDriver: true,
+            tension: 40,
+            friction: 8,
+            velocity: 1,
           }).start(onHide);
         } else {
           Animated.spring(swipeX, {
@@ -89,13 +109,6 @@ export const Toast: React.FC<ToastProps> = ({
       },
     })
   ).current;
-
-  const getPositionStyle = () => {
-    const baseOffset = Platform.OS === 'ios' ? 64 : 32;
-    return {
-      [position]: baseOffset,
-    };
-  };
 
   const colors = theme[colorScheme][type];
 
@@ -130,9 +143,22 @@ export const Toast: React.FC<ToastProps> = ({
     ],
     opacity,
     zIndex: 1000 - index,
-    ...getPositionStyle(),
-    backgroundColor: colors.background,
-    borderColor: colors.border,
+  };
+
+  const getPositionStyle = () => {
+    const basePosition: any = {
+      position: 'absolute',
+      left: 16,
+      right: 16,
+    };
+
+    if (position === 'bottom') {
+      basePosition.bottom = Platform.OS === 'ios' ? 48 : 24;
+    } else {
+      basePosition.top = Platform.OS === 'ios' ? 48 : 24;
+    }
+
+    return basePosition;
   };
 
   return (
@@ -140,26 +166,26 @@ export const Toast: React.FC<ToastProps> = ({
       {...panResponder.panHandlers}
       style={[
         styles.container,
+        getPositionStyle(),
         animatedStyle,
+        { backgroundColor: colors.background, borderColor: colors.border },
         customStyle,
       ]}
     >
-      <View style={styles.content}>
-        <View style={styles.contentWrapper}>
-          <View style={styles.iconContainer}>
-            {renderIcon()}
-          </View>
-          <Text
-            style={[
-              styles.message,
-              { color: colors.text },
-              messageStyle
-            ]}
-            numberOfLines={2}
-          >
-            {message}
-          </Text>
+      <View style={styles.contentWrapper}>
+        <View style={styles.iconContainer}>
+          {renderIcon()}
         </View>
+        <Text
+          style={[
+            styles.message,
+            { color: colors.text },
+            messageStyle
+          ]}
+          numberOfLines={2}
+        >
+          {message}
+        </Text>
       </View>
     </Animated.View>
   );
@@ -167,51 +193,38 @@ export const Toast: React.FC<ToastProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
-    width: width - 32,
-    alignSelf: 'center',
     maxWidth: 400,
+    alignSelf: 'center',
     minHeight: TOAST_HEIGHT,
-    borderRadius: 12,
+    borderRadius: 8,
     borderWidth: 1,
     overflow: 'hidden',
     ...Platform.select({
       ios: {
         shadowColor: '#000000',
-        shadowOffset: {
-          width: 0,
-          height: 2,
-        },
-        shadowOpacity: 0.1,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
         shadowRadius: 8,
       },
       android: {
-        elevation: 6,
+        elevation: 3,
       },
     }),
-  },
-  content: {
-    flex: 1,
-    minHeight: TOAST_HEIGHT,
-    justifyContent: 'center',
   },
   contentWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
+    minHeight: TOAST_HEIGHT,
   },
   iconContainer: {
     marginRight: 12,
-    alignSelf: 'center',
   },
   message: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '500',
     lineHeight: 20,
-    textAlign: 'left',
-    textAlignVertical: 'center',
   },
 });
