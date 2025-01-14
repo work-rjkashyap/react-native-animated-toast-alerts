@@ -1,3 +1,4 @@
+
 # React Native Animated Toast
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-90.3%25-blue)
@@ -10,25 +11,29 @@ A modern, highly customizable animated toast notification library for React Nati
 <div align="center">
 <img src="https://socialify.git.ci/work-rjkashyap/react-native-animated-toast-alerts/image?font=Raleway&forks=1&issues=1&language=1&name=1&owner=1&pulls=1&stargazers=1&theme=Light" alt="react-native-animated-toast-alerts" width="640" height="320" />
 
-  <p align="center">
-    <a href="Installation">Installation</a> •
-    <a href="#usage">Usage</a> •
-    <a href="#customization">Customization</a> •
-    <a href="#api">API</a>
-  </p>
+<p align="center">
+  <a href="#installation">Installation</a> •
+  <a href="#usage">Usage</a> •
+  <a href="#customization">Customization</a> •
+  <a href="#api-reference">API Reference</a>
+</p>
 </div>
+
+---
 
 ## ✨ Features
 
-- 🎨 **Modern Design** - Clean, minimalist interface with smooth animations
-- 🔄 **Sonner-Style Stacking** - Beautiful entrance and exit animations with proper stacking
-- 🌓 **Theme Integration** - Seamless dark mode support with customizable themes
-- 📱 **Multiple Positions** - Support for top, bottom, and center positions
-- 👆 **Advanced Gestures** - Intuitive swipe-to-dismiss with natural physics
-- 💅 **Flexible Styling** - Extensive customization options for colors, icons, and animations
-- 🔧 **TypeScript Support** - Comprehensive type definitions for better development
-- ⚡ **Performance Optimized** - Efficient animations using React Native's Animated API
-- 🎁 **Icon Integration** - Seamless support for Lucide icons
+- 🎨 **Modern Design** - Clean, minimalist interface with smooth animations.
+- 🔄 **Sonner-Style Stacking** - Beautiful entrance and exit animations with proper stacking.
+- 🌓 **Theme Integration** - Seamless dark mode support with customizable themes.
+- 📱 **Multiple Positions** - Support for top, bottom, and center positions.
+- 👆 **Advanced Gestures** - Intuitive swipe-to-dismiss with natural physics.
+- 💅 **Flexible Styling** - Extensive customization options for colors, icons, and animations.
+- 🔧 **TypeScript Support** - Comprehensive type definitions for better development.
+- ⚡ **Performance Optimized** - Efficient animations using React Native's Animated API.
+- 🎁 **Icon Integration** - Seamless support for Lucide icons.
+
+---
 
 ## 🚀 Installation
 
@@ -46,15 +51,18 @@ pnpm add react-native-animated-toast-alerts lucide-react-native react-native-svg
 ```
 
 ### 2. iOS Setup
+
+Run the following command to install the required CocoaPods dependencies:
+
 ```bash
 cd ios && pod install && cd ..
 ```
 
+---
+
 ## 🎯 Quick Start
 
-### Set up the Provider
-
-Wrap your application with the `ToastProvider`:
+### Wrap your Application with the `ToastProvider`
 
 ```typescript
 import { ToastProvider } from 'react-native-animated-toast-alerts';
@@ -70,7 +78,7 @@ const App = () => {
 export default App;
 ```
 
-### Using the Toast
+### Display a Toast
 
 ```typescript
 import { useToast } from 'react-native-animated-toast-alerts';
@@ -98,7 +106,11 @@ const MyComponent = () => {
 };
 ```
 
+---
+
 ## 🎨 Toast Types
+
+### Predefined Toast Types
 
 ```typescript
 // ℹ️ Info toast
@@ -125,6 +137,8 @@ showToast({
   message: 'Please review input',
 });
 ```
+
+---
 
 ## 💅 Customization
 
@@ -165,6 +179,8 @@ showToast({
 });
 ```
 
+---
+
 ## 📚 API Reference
 
 ### ToastOptions
@@ -174,7 +190,7 @@ interface ToastOptions {
   type?: 'info' | 'success' | 'error' | 'warning';
   message: string;
   duration?: number;
-  position?: 'top' | 'bottom' | 'center';
+  position?: 'top' | 'bottom';
   icon?: ToastIcon;
   customStyle?: StyleProp<ViewStyle>;
   messageStyle?: StyleProp<TextStyle>;
@@ -190,15 +206,17 @@ type ToastIcon = {
 };
 ```
 
-
+---
 
 ## 📱 Platform Specific Features
 
 The library provides optimized experiences for both platforms:
 
-- **iOS**: Native shadows, safe area handling, and smooth animations
-- **Android**: Material Design elevation and touch feedback
-- **Both**: Natural gesture interactions and proper theme integration
+- **iOS**: Native shadows, safe area handling, and smooth animations.
+- **Android**: Material Design elevation and touch feedback.
+- **Both**: Natural gesture interactions and proper theme integration.
+
+---
 
 ## 🔧 Technical Requirements
 
@@ -206,9 +224,13 @@ The library provides optimized experiences for both platforms:
 - React >= 16.8.0
 - TypeScript >= 4.0.0 (for TypeScript users)
 
+---
+
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit issues and pull requests.
+Contributions are welcome! Please feel free to submit issues and pull requests. For major changes, kindly open a discussion first.
+
+---
 
 ## 📄 License
 
