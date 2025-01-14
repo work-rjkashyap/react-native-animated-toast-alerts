@@ -6,16 +6,16 @@
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-A modern, highly customizable animated toast notification library for React Native featuring Sonner-style stacking animations, gesture support, and comprehensive TypeScript compatibility.
+A modern, highly customizable animated toast notification library for React Native featuring stacking animations, gesture support, and comprehensive TypeScript compatibility.
 
 <div align="center">
 <img src="https://socialify.git.ci/work-rjkashyap/react-native-animated-toast-alerts/image?font=Raleway&forks=1&issues=1&language=1&name=1&owner=1&pulls=1&stargazers=1&theme=Light" alt="react-native-animated-toast-alerts" width="640" height="320" />
 
 <p align="center">
-  <a href="#installation">Installation</a> •
-  <a href="#usage">Usage</a> •
-  <a href="#customization">Customization</a> •
-  <a href="#api-reference">API Reference</a>
+  <a href="#-installation">Installation</a> •
+  <a href="#-quick-start">Usage</a> •
+  <a href="#-customization">Customization</a> •
+  <a href="#-api-reference">API Reference</a>
 </p>
 </div>
 
@@ -24,7 +24,7 @@ A modern, highly customizable animated toast notification library for React Nati
 ## ✨ Features
 
 - 🎨 **Modern Design** - Clean, minimalist interface with smooth animations.
-- 🔄 **Sonner-Style Stacking** - Beautiful entrance and exit animations with proper stacking.
+- 🔄 **Animated Stacking** - Beautiful entrance and exit animations with proper stacking.
 - 🌓 **Theme Integration** - Seamless dark mode support with customizable themes.
 - 📱 **Multiple Positions** - Support for top, bottom, and center positions.
 - 👆 **Advanced Gestures** - Intuitive swipe-to-dismiss with natural physics.
