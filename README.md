@@ -5,6 +5,7 @@
 ![Java](https://img.shields.io/badge/Java-9.7%25-orange)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![NPM Version](https://img.shields.io/npm/v/react-native-animated-toast-alerts)
 
 A modern, highly customizable animated toast notification library for React Native featuring stacking animations, gesture support, and comprehensive TypeScript compatibility.
 

@@ -13,7 +13,7 @@ import { useToastTheme } from './ToastContext';
 import { ToastProps, ToastType } from './types';
 
 const { width } = Dimensions.get('window');
-const TOAST_HEIGHT = 64;
+const TOAST_HEIGHT = 55;
 const SWIPE_THRESHOLD = 50;
 const MAX_VISIBLE_TOASTS = 3;
 const OFFSET_PER_TOAST = 4;
@@ -214,8 +214,8 @@ const styles = StyleSheet.create({
   contentWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
     minHeight: TOAST_HEIGHT,
   },
   iconContainer: {

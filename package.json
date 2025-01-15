@@ -1,6 +1,6 @@
 {
   "name": "react-native-animated-toast-alerts",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "nativePackage": true,
   "description": "An animated toast component for React Native",
   "main": "lib/index.js",
@@ -8,7 +8,7 @@
   "scripts": {
     "build": "tsc",
     "prepare": "npm run build",
-    "clean": "rm -rf lib"
+    "clean": "rmdir lib"
   },
   "keywords": [
     "react-native",
@@ -24,17 +24,17 @@
   "license": "MIT",
   "peerDependencies": {
     "react": "*",
-    "react-native": "*"
+    "react-native": "*",
+    "react-native-svg": ">=13.0.0",
+    "lucide-react-native": ">=0.469.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",
     "@types/react-native": "^0.72.0",
     "react": "^18.2.0",
     "react-native": "^0.72.0",
-    "typescript": "^5.0.0"
-  },
-  "dependencies": {
-    "lucide-react-native": "^0.469.0",
-    "react-native-svg": "^15.10.1"
+    "typescript": "^5.0.0",
+    "react-native-svg": "^15.10.1",
+    "lucide-react-native": "^0.469.0"
   }
 }
