@@ -1,6 +1,12 @@
 import React, {createContext, useContext, useCallback, useState} from 'react';
 import {useColorScheme} from 'react-native';
-import {ToastContextType, ToastTheme, ToastProps, ToastOptions} from './types';
+import {
+  ToastContextType,
+  ToastTheme,
+  ToastProps,
+  ToastOptions,
+  ToastFunction,
+} from './types';
 import {defaultTheme} from './theme';
 import {Toast} from './Toast';
 
@@ -35,42 +41,65 @@ export const ToastProvider: React.FC<{children: React.ReactNode}> = ({
   children,
 }) => {
   const [toasts, setToasts] = useState<
-    (Omit<ToastProps, 'visible' | 'onHide'> & {id: string})[]
+    (Omit<ToastProps, 'visible' | 'onHide' | 'index'> & {id: string})[]
+  >([]);
+  const [queue, setQueue] = useState<
+    (Omit<ToastProps, 'visible' | 'onHide' | 'index'> & {id: string})[]
   >([]);
 
-  const showToast = useCallback((options: ToastOptions) => {
-    const id = Date.now().toString();
+  // Use a ref to track toasts for synchronous access in showToast
+  // ensuring we don't have stale closures or dependency cycles
+  const toastsRef = React.useRef(toasts);
+  React.useEffect(() => {
+    toastsRef.current = toasts;
+  }, [toasts]);
 
-    setToasts(prev => {
-      const updatedToasts = [
-        {
-          id,
-          type: options.type || 'info',
-          message: options.message,
-          position: options.position || 'top',
-          icon: options.icon,
-          customStyle: options.customStyle,
-          messageStyle: options.messageStyle,
-        } as Omit<ToastProps, 'visible' | 'onHide'> & {id: string},
-        ...prev,
-      ].slice(0, MAX_TOASTS);
+  const hideToast = useCallback((id?: string) => {
+    setToasts(prev => (id ? prev.filter(t => t.id !== id) : prev.slice(1)));
+  }, []);
 
-      // Clear timeouts for removed toasts
-      prev.slice(MAX_TOASTS).forEach(toast => clearTimeout(toast.id));
+  // Process queue whenever toasts or queue changes
+  React.useEffect(() => {
+    if (toasts.length < MAX_TOASTS && queue.length > 0) {
+      const nextToast = queue[0];
+      setQueue(prev => prev.slice(1));
+      setToasts(prev => [nextToast, ...prev]);
 
-      return updatedToasts;
-    });
-
-    if (options.duration !== undefined && options.duration > 0) {
-      setTimeout(() => {
-        setToasts(prev => prev.filter(toast => toast.id !== id));
-      }, options.duration);
+      if (nextToast.duration && nextToast.duration > 0) {
+        setTimeout(() => {
+          hideToast(nextToast.id);
+        }, nextToast.duration);
+      }
     }
-  }, []);
+  }, [toasts.length, queue, hideToast]);
 
-  const hideToast = useCallback(() => {
-    setToasts(prev => prev.slice(1));
-  }, []);
+  const showToast = useCallback(
+    (options: ToastOptions) => {
+      const id = Date.now().toString();
+      const newToast = {
+        id,
+        type: options.type || 'info',
+        message: options.message,
+        position: options.position || 'top',
+        icon: options.icon,
+        customStyle: options.customStyle,
+        messageStyle: options.messageStyle,
+        duration: options.duration,
+      };
+
+      if (toastsRef.current.length >= MAX_TOASTS) {
+        setQueue(prev => [...prev, newToast]);
+      } else {
+        setToasts(prev => [newToast, ...prev]);
+        if (options.duration !== undefined && options.duration > 0) {
+          setTimeout(() => {
+            hideToast(id);
+          }, options.duration);
+        }
+      }
+    },
+    [hideToast],
+  );
 
   return (
     <ToastContext.Provider value={{showToast, hideToast}}>
@@ -80,7 +109,7 @@ export const ToastProvider: React.FC<{children: React.ReactNode}> = ({
           key={toast.id}
           {...toast}
           visible
-          onHide={() => setToasts(prev => prev.filter(t => t.id !== toast.id))}
+          onHide={() => hideToast(toast.id)}
           index={index}
         />
       ))}
@@ -88,12 +117,15 @@ export const ToastProvider: React.FC<{children: React.ReactNode}> = ({
   );
 };
 
-export const useToast = () => {
+export const useToast = (): ToastFunction => {
   const context = useContext(ToastContext);
   if (!context) {
     throw new Error('useToast must be used within a ToastProvider');
   }
-  return context;
+
+  const toastFunc = context.showToast as unknown as ToastFunction;
+  toastFunc.hide = context.hideToast;
+  return toastFunc;
 };
 
 export const useToastTheme = () => {

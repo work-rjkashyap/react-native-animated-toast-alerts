@@ -32,8 +32,12 @@ export interface ToastProps extends ToastOptions {
 
 export interface ToastContextType {
   showToast: (options: ToastOptions) => void;
-  hideToast: () => void;
+  hideToast: (id?: string) => void;
 }
+
+export type ToastFunction = ((options: ToastOptions) => void) & {
+  hide: (id?: string) => void;
+};
 
 export interface ToastThemeColors {
   info: {

@@ -170,6 +170,9 @@ export const Toast: React.FC<ToastProps> = ({
   return (
     <Animated.View
       {...panResponder.panHandlers}
+      accessibilityRole="alert"
+      accessibilityLiveRegion="polite"
+      accessibilityLabel={`${type} notification: ${message}`}
       style={[
         styles.container,
         getPositionStyle(),
