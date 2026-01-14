@@ -1,0 +1,432 @@
+---
+title: TypeScript
+description: TypeScript integration and type-safe usage
+---
+
+# TypeScript Integration
+
+react-native-animated-toast-alerts is built with TypeScript and provides comprehensive type definitions for a better development experience.
+
+## Type Definitions
+
+All types are exported from the main package:
+
+```tsx
+import type {
+  ToastOptions,
+  ToastIcon,
+  ToastType,
+  ToastPosition,
+} from 'react-native-animated-toast-alerts';
+```
+
+## ToastOptions Interface
+
+The complete type definition for toast options:
+
+```tsx
+interface ToastOptions {
+  type?: 'info' | 'success' | 'error' | 'warning';
+  message: string;
+  duration?: number;
+  position?: 'top' | 'bottom';
+  icon?: ToastIcon;
+  customStyle?: StyleProp<ViewStyle>;
+  messageStyle?: StyleProp<TextStyle>;
+}
+```
+
+## Type-Safe Toast Configuration
+
+### Basic Usage
+
+```tsx
+import { useToast } from 'react-native-animated-toast-alerts';
+import type { ToastOptions } from 'react-native-animated-toast-alerts';
+
+function MyComponent() {
+  const showToast = useToast();
+
+  // Type-safe configuration
+  const config: ToastOptions = {
+    type: 'success',
+    message: 'Operation completed',
+    duration: 3000,
+    position: 'top'
+  };
+
+  const handlePress = () => {
+    showToast(config);
+  };
+
+  return <Button title="Show Toast" onPress={handlePress} />;
+}
+```
+
+### With Const Assertions
+
+```tsx
+const toastConfig = {
+  type: 'success',
+  message: 'Saved!',
+  duration: 3000
+} as const satisfies ToastOptions;
+
+showToast(toastConfig);
+```
+
+## Custom Type Extensions
+
+### Extending Toast Types
+
+Create custom toast type configurations:
+
+```tsx
+type CustomToastType = 'loading' | 'notification';
+
+interface ExtendedToastOptions extends Omit<ToastOptions, 'type'> {
+  type?: ToastOptions['type'] | CustomToastType;
+}
+
+function useExtendedToast() {
+  const showToast = useToast();
+
+  return (options: ExtendedToastOptions) => {
+    if (options.type === 'loading') {
+      showToast({
+        ...options,
+        type: 'info',
+        message: options.message,
+        duration: 0,
+        customStyle: {
+          backgroundColor: '#F3F4F6'
+        }
+      });
+    } else if (options.type === 'notification') {
+      showToast({
+        ...options,
+        type: 'info',
+        message: options.message,
+        customStyle: {
+          backgroundColor: '#EFF6FF'
+        }
+      });
+    } else {
+      showToast(options as ToastOptions);
+    }
+  };
+}
+```
+
+### Theme-Aware Types
+
+```tsx
+import { useColorScheme } from 'react-native';
+
+interface ThemedToastOptions extends ToastOptions {
+  theme?: 'light' | 'dark' | 'auto';
+}
+
+function useThemedToast() {
+  const showToast = useToast();
+  const colorScheme = useColorScheme();
+
+  return (options: ThemedToastOptions) => {
+    const theme = options.theme === 'auto'
+      ? colorScheme
+      : options.theme || colorScheme;
+
+    const themedStyle = theme === 'dark' ? {
+      backgroundColor: '#1F2937',
+      borderColor: '#374151'
+    } : {
+      backgroundColor: '#FFFFFF',
+      borderColor: '#E5E7EB'
+    };
+
+    showToast({
+      ...options,
+      customStyle: {
+        ...themedStyle,
+        ...options.customStyle
+      }
+    });
+  };
+}
+```
+
+## Type-Safe Icon Usage
+
+### With Lucide Icons
+
+```tsx
+import type { LucideIcon } from 'lucide-react-native';
+import { Camera, Heart, Star } from 'lucide-react-native';
+
+interface IconConfig {
+  icon: LucideIcon;
+  size?: number;
+  color?: string;
+}
+
+const createIconToast = (
+  message: string,
+  iconConfig: IconConfig
+): ToastOptions => ({
+  message,
+  icon: {
+    icon: iconConfig.icon,
+    props: {
+      size: iconConfig.size || 24,
+      color: iconConfig.color || '#3B82F6'
+    }
+  }
+});
+
+// Usage
+showToast(createIconToast('Photo captured', {
+  icon: Camera,
+  size: 24,
+  color: '#16A34A'
+}));
+```
+
+### Custom Icon Component Types
+
+```tsx
+import type { ComponentType } from 'react';
+
+interface CustomIconProps {
+  size: number;
+  color: string;
+}
+
+const CustomIcon: ComponentType<CustomIconProps> = ({ size, color }) => (
+  <View style={{ width: size, height: size, backgroundColor: color }} />
+);
+
+showToast({
+  message: 'Custom icon',
+  icon: {
+    icon: CustomIcon,
+    props: {
+      size: 24,
+      color: '#8B5CF6'
+    }
+  }
+});
+```
+
+## Generic Toast Factory
+
+Create a type-safe toast factory:
+
+```tsx
+type ToastFactory = {
+  [K in ToastOptions['type'] as K extends string ? K : never]: (
+    message: string,
+    options?: Partial<Omit<ToastOptions, 'type' | 'message'>>
+  ) => void;
+};
+
+function createToastFactory(showToast: ReturnType<typeof useToast>): ToastFactory {
+  return {
+    info: (message, options) => showToast({ ...options, type: 'info', message }),
+    success: (message, options) => showToast({ ...options, type: 'success', message }),
+    error: (message, options) => showToast({ ...options, type: 'error', message }),
+    warning: (message, options) => showToast({ ...options, type: 'warning', message }),
+  };
+}
+
+// Usage
+function MyComponent() {
+  const showToast = useToast();
+  const toast = createToastFactory(showToast);
+
+  const handleSuccess = () => {
+    toast.success('Operation completed!', {
+      duration: 3000,
+      position: 'top'
+    });
+  };
+
+  return <Button title="Success" onPress={handleSuccess} />;
+}
+```
+
+## Utility Types
+
+### Toast Configuration Builders
+
+```tsx
+type ToastConfigBuilder<T extends Partial<ToastOptions>> = (
+  message: string
+) => ToastOptions & T;
+
+const createSuccessToast: ToastConfigBuilder<{ type: 'success' }> = (message) => ({
+  type: 'success',
+  message,
+  duration: 3000,
+  position: 'top'
+});
+
+const createErrorToast: ToastConfigBuilder<{ type: 'error' }> = (message) => ({
+  type: 'error',
+  message,
+  duration: 5000,
+  position: 'top'
+});
+
+// Usage
+showToast(createSuccessToast('Saved!'));
+showToast(createErrorToast('Failed to save'));
+```
+
+### Strict Type Checking
+
+```tsx
+// Ensure all required properties are provided
+type StrictToastOptions = Required<Pick<ToastOptions, 'message'>> &
+  Partial<Omit<ToastOptions, 'message'>>;
+
+function strictShowToast(options: StrictToastOptions) {
+  showToast(options);
+}
+
+// ✅ Valid
+strictShowToast({ message: 'Hello' });
+
+// ❌ Error - message is required
+strictShowToast({ type: 'info' });
+```
+
+## Type Guards
+
+### Checking Toast Types
+
+```tsx
+function isSuccessToast(options: ToastOptions): options is ToastOptions & { type: 'success' } {
+  return options.type === 'success';
+}
+
+function isErrorToast(options: ToastOptions): options is ToastOptions & { type: 'error' } {
+  return options.type === 'error';
+}
+
+// Usage
+const config: ToastOptions = {
+  type: 'success',
+  message: 'Done!'
+};
+
+if (isSuccessToast(config)) {
+  // TypeScript knows config.type is 'success'
+  console.log('Success toast');
+}
+```
+
+## Best Practices
+
+### 1. Use Type Imports
+
+```tsx
+// ✅ Good - Type-only import
+import type { ToastOptions } from 'react-native-animated-toast-alerts';
+
+// ❌ Avoid - Runtime import for types
+import { ToastOptions } from 'react-native-animated-toast-alerts';
+```
+
+### 2. Leverage Type Inference
+
+```tsx
+// ✅ Good - Let TypeScript infer
+const config = {
+  type: 'success' as const,
+  message: 'Done'
+};
+
+showToast(config);
+
+// ❌ Unnecessary - Explicit typing
+const config: ToastOptions = {
+  type: 'success',
+  message: 'Done'
+};
+```
+
+### 3. Use Const Assertions
+
+```tsx
+// ✅ Good - Const assertion for literal types
+const TOAST_TYPES = {
+  SUCCESS: 'success',
+  ERROR: 'error',
+  INFO: 'info',
+  WARNING: 'warning'
+} as const;
+
+type ToastType = typeof TOAST_TYPES[keyof typeof TOAST_TYPES];
+```
+
+### 4. Create Reusable Types
+
+```tsx
+// Define once, use everywhere
+type AppToastOptions = ToastOptions & {
+  trackAnalytics?: boolean;
+  userId?: string;
+};
+
+function useAppToast() {
+  const showToast = useToast();
+
+  return (options: AppToastOptions) => {
+    if (options.trackAnalytics) {
+      // Track analytics
+      analytics.track('toast_shown', {
+        type: options.type,
+        userId: options.userId
+      });
+    }
+
+    showToast(options);
+  };
+}
+```
+
+## Common Type Errors
+
+### Error: Type 'string' is not assignable to type 'ToastType'
+
+```tsx
+// ❌ Error
+const type = 'success';
+showToast({ type, message: 'Done' });
+
+// ✅ Fix - Use const assertion
+const type = 'success' as const;
+showToast({ type, message: 'Done' });
+
+// ✅ Or - Use literal type
+const type: ToastOptions['type'] = 'success';
+showToast({ type, message: 'Done' });
+```
+
+### Error: Property 'hide' does not exist
+
+```tsx
+// ❌ Error
+const toast = useToast();
+const hideToast = toast.hide; // Error
+
+// ✅ Fix - Call hide as method
+const toast = useToast();
+toast.hide();
+```
+
+## Next Steps
+
+- Explore [Advanced Usage](/docs/advanced) for complex patterns
+- Check the [API Reference](/docs/api-reference) for all types
+- Review [Customization](/docs/customization) for styling types

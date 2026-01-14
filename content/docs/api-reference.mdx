@@ -1,0 +1,456 @@
+---
+title: API Reference
+description: Complete API documentation for react-native-animated-toast-alerts
+---
+
+# API Reference
+
+Complete reference for all components, hooks, and types in react-native-animated-toast-alerts.
+
+## Components
+
+### ToastProvider
+
+The root provider component that manages toast state and rendering.
+
+```tsx
+import { ToastProvider } from 'react-native-animated-toast-alerts';
+
+function App() {
+  return (
+    <ToastProvider>
+      <YourApp />
+    </ToastProvider>
+  );
+}
+```
+
+**Props:**
+
+The `ToastProvider` component doesn't accept any props. It manages all toast state internally.
+
+**Usage Notes:**
+- Must wrap your entire app or the part where you want to display toasts
+- Only one `ToastProvider` should be used per app
+- Place it as high as possible in your component tree
+
+---
+
+## Hooks
+
+### useToast
+
+The primary hook for displaying and controlling toast notifications.
+
+```tsx
+const showToast = useToast();
+```
+
+**Returns:**
+
+A function with the following signature:
+
+```tsx
+(options: ToastOptions) => void
+```
+
+The returned function also has a `.hide()` method:
+
+```tsx
+showToast.hide() => void
+```
+
+**Example:**
+
+```tsx
+import { useToast } from 'react-native-animated-toast-alerts';
+
+function MyComponent() {
+  const showToast = useToast();
+
+  const handleSuccess = () => {
+    showToast({
+      type: 'success',
+      message: 'Operation completed!'
+    });
+  };
+
+  const handleLoading = async () => {
+    showToast({ message: 'Loading...', duration: 0 });
+    await someAsyncOperation();
+    showToast.hide();
+  };
+
+  return (
+    <>
+      <Button title="Success" onPress={handleSuccess} />
+      <Button title="Loading" onPress={handleLoading} />
+    </>
+  );
+}
+```
+
+---
+
+## Types
+
+### ToastOptions
+
+Configuration object for displaying a toast.
+
+```tsx
+interface ToastOptions {
+  type?: 'info' | 'success' | 'error' | 'warning';
+  message: string;
+  duration?: number;
+  position?: 'top' | 'bottom';
+  icon?: ToastIcon;
+  customStyle?: StyleProp<ViewStyle>;
+  messageStyle?: StyleProp<TextStyle>;
+}
+```
+
+#### Properties
+
+##### `type` (optional)
+
+- **Type:** `'info' | 'success' | 'error' | 'warning'`
+- **Default:** `'info'`
+- **Description:** Predefined toast type with default styling and icon
+
+```tsx
+showToast({
+  type: 'success',
+  message: 'Saved!'
+});
+```
+
+##### `message` (required)
+
+- **Type:** `string`
+- **Description:** The text content to display in the toast
+
+```tsx
+showToast({
+  message: 'Hello, World!'
+});
+```
+
+##### `duration` (optional)
+
+- **Type:** `number`
+- **Default:** `3000` (3 seconds)
+- **Description:** How long the toast stays visible in milliseconds. Set to `0` for persistent toasts.
+
+```tsx
+// Show for 5 seconds
+showToast({
+  message: 'Long message',
+  duration: 5000
+});
+
+// Persistent toast
+showToast({
+  message: 'Stays until dismissed',
+  duration: 0
+});
+```
+
+##### `position` (optional)
+
+- **Type:** `'top' | 'bottom'`
+- **Default:** `'top'`
+- **Description:** Where the toast appears on the screen
+
+```tsx
+showToast({
+  message: 'Bottom toast',
+  position: 'bottom'
+});
+```
+
+##### `icon` (optional)
+
+- **Type:** `ToastIcon`
+- **Description:** Custom icon configuration
+
+```tsx
+import { Camera } from 'lucide-react-native';
+
+showToast({
+  message: 'Photo captured',
+  icon: {
+    icon: Camera,
+    props: {
+      size: 24,
+      color: '#3B82F6'
+    }
+  }
+});
+```
+
+##### `customStyle` (optional)
+
+- **Type:** `StyleProp<ViewStyle>`
+- **Description:** Custom styles for the toast container
+
+```tsx
+showToast({
+  message: 'Custom styled',
+  customStyle: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 16,
+    padding: 20
+  }
+});
+```
+
+##### `messageStyle` (optional)
+
+- **Type:** `StyleProp<TextStyle>`
+- **Description:** Custom styles for the message text
+
+```tsx
+showToast({
+  message: 'Custom text',
+  messageStyle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1E293B'
+  }
+});
+```
+
+---
+
+### ToastIcon
+
+Icon configuration object.
+
+```tsx
+type ToastIcon = {
+  icon: LucideIcon | React.ComponentType<any>;
+  props?: {
+    size?: number;
+    color?: string;
+    [key: string]: any;
+  };
+};
+```
+
+#### Properties
+
+##### `icon` (required)
+
+- **Type:** `LucideIcon | React.ComponentType<any>`
+- **Description:** The icon component to render. Can be a Lucide icon or any custom React component.
+
+##### `props` (optional)
+
+- **Type:** `object`
+- **Description:** Props to pass to the icon component
+
+**Common props for Lucide icons:**
+- `size`: Icon size in pixels
+- `color`: Icon color (hex, rgb, or named color)
+- `strokeWidth`: Line thickness for the icon
+- `fill`: Fill color for filled icons
+
+```tsx
+import { Star } from 'lucide-react-native';
+
+showToast({
+  message: 'Favorite added',
+  icon: {
+    icon: Star,
+    props: {
+      size: 24,
+      color: '#F59E0B',
+      fill: '#F59E0B',
+      strokeWidth: 2
+    }
+  }
+});
+```
+
+---
+
+## Methods
+
+### showToast()
+
+Display a toast notification.
+
+**Signature:**
+
+```tsx
+showToast(options: ToastOptions): void
+```
+
+**Parameters:**
+- `options`: Toast configuration object (see `ToastOptions`)
+
+**Example:**
+
+```tsx
+const showToast = useToast();
+
+showToast({
+  type: 'success',
+  message: 'Operation completed!',
+  duration: 3000,
+  position: 'top'
+});
+```
+
+### showToast.hide()
+
+Manually hide the currently displayed toast.
+
+**Signature:**
+
+```tsx
+showToast.hide(): void
+```
+
+**Example:**
+
+```tsx
+const showToast = useToast();
+
+// Show persistent toast
+showToast({
+  message: 'Processing...',
+  duration: 0
+});
+
+// Hide it later
+setTimeout(() => {
+  showToast.hide();
+}, 5000);
+```
+
+---
+
+## Default Values
+
+| Option | Default Value | Description |
+|--------|--------------|-------------|
+| `type` | `'info'` | Toast type |
+| `duration` | `3000` | Display duration in ms |
+| `position` | `'top'` | Toast position |
+| `icon` | Type-specific | Default icon based on type |
+| `customStyle` | `{}` | No custom styles |
+| `messageStyle` | `{}` | No custom text styles |
+
+---
+
+## TypeScript Usage
+
+The library is fully typed. Import types as needed:
+
+```tsx
+import type { ToastOptions, ToastIcon } from 'react-native-animated-toast-alerts';
+
+// Type-safe toast configuration
+const toastConfig: ToastOptions = {
+  type: 'success',
+  message: 'Typed toast',
+  duration: 3000
+};
+
+// Type-safe icon configuration
+const iconConfig: ToastIcon = {
+  icon: Camera,
+  props: {
+    size: 24,
+    color: '#3B82F6'
+  }
+};
+```
+
+---
+
+## Examples
+
+### Basic Usage
+
+```tsx
+import { useToast } from 'react-native-animated-toast-alerts';
+
+function MyComponent() {
+  const showToast = useToast();
+
+  return (
+    <Button
+      title="Show Toast"
+      onPress={() => showToast({ message: 'Hello!' })}
+    />
+  );
+}
+```
+
+### With All Options
+
+```tsx
+import { Camera } from 'lucide-react-native';
+
+showToast({
+  type: 'success',
+  message: 'Photo saved to gallery',
+  duration: 5000,
+  position: 'bottom',
+  icon: {
+    icon: Camera,
+    props: {
+      size: 24,
+      color: '#16A34A'
+    }
+  },
+  customStyle: {
+    backgroundColor: '#F0FDF4',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#86EFAC'
+  },
+  messageStyle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#166534'
+  }
+});
+```
+
+### Async Operations
+
+```tsx
+const handleUpload = async () => {
+  showToast({
+    message: 'Uploading...',
+    duration: 0
+  });
+
+  try {
+    await uploadFile();
+    showToast.hide();
+    showToast({
+      type: 'success',
+      message: 'Upload complete!'
+    });
+  } catch (error) {
+    showToast.hide();
+    showToast({
+      type: 'error',
+      message: 'Upload failed'
+    });
+  }
+};
+```
+
+---
+
+## Next Steps
+
+- Explore [Customization](/docs/customization) for styling examples
+- Check [Advanced Usage](/docs/advanced) for complex scenarios
+- Learn about [TypeScript](/docs/typescript) integration

@@ -1,0 +1,349 @@
+---
+title: Customization
+description: Learn how to customize the appearance and behavior of your toast notifications
+---
+
+# Customization
+
+react-native-animated-toast-alerts offers extensive customization options to match your app's design system.
+
+## Custom Styling
+
+Use the `customStyle` prop to customize the toast container:
+
+```tsx
+showToast({
+  message: 'Custom styled toast',
+  customStyle: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5
+  }
+});
+```
+
+## Message Styling
+
+Customize the message text with `messageStyle`:
+
+```tsx
+showToast({
+  message: 'Custom text styling',
+  messageStyle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1E293B',
+    fontFamily: 'YourCustomFont',
+    letterSpacing: 0.5
+  }
+});
+```
+
+## Custom Icons
+
+### Using Lucide Icons
+
+Import any icon from `lucide-react-native`:
+
+```tsx
+import { Camera, Heart, Star, Bell, Mail } from 'lucide-react-native';
+
+// Camera icon
+showToast({
+  message: 'Photo captured!',
+  icon: {
+    icon: Camera,
+    props: {
+      size: 24,
+      color: '#3B82F6',
+      strokeWidth: 2
+    }
+  }
+});
+
+// Heart icon with custom color
+showToast({
+  message: 'Added to favorites',
+  icon: {
+    icon: Heart,
+    props: {
+      size: 22,
+      color: '#EF4444',
+      fill: '#EF4444'
+    }
+  }
+});
+```
+
+### Custom Icon Components
+
+You can also use custom React components as icons:
+
+```tsx
+import { View } from 'react-native';
+
+const CustomIcon = ({ size, color }) => (
+  <View style={{
+    width: size,
+    height: size,
+    backgroundColor: color,
+    borderRadius: size / 2
+  }} />
+);
+
+showToast({
+  message: 'Custom component icon',
+  icon: {
+    icon: CustomIcon,
+    props: {
+      size: 24,
+      color: '#8B5CF6'
+    }
+  }
+});
+```
+
+## Position Customization
+
+Control where toasts appear on the screen:
+
+```tsx
+// Top position (default)
+showToast({
+  message: 'Top toast',
+  position: 'top'
+});
+
+// Bottom position
+showToast({
+  message: 'Bottom toast',
+  position: 'bottom'
+});
+```
+
+## Duration Control
+
+Set custom display durations:
+
+```tsx
+// Short duration (2 seconds)
+showToast({
+  message: 'Quick message',
+  duration: 2000
+});
+
+// Long duration (10 seconds)
+showToast({
+  message: 'Important message',
+  duration: 10000
+});
+
+// Persistent (until manually dismissed)
+showToast({
+  message: 'Stays until dismissed',
+  duration: 0
+});
+```
+
+## Theme-Based Styling
+
+Create reusable toast configurations:
+
+```tsx
+// Define your theme
+const toastTheme = {
+  light: {
+    container: {
+      backgroundColor: '#FFFFFF',
+      borderColor: '#E5E7EB',
+      shadowColor: '#000'
+    },
+    text: {
+      color: '#111827'
+    }
+  },
+  dark: {
+    container: {
+      backgroundColor: '#1F2937',
+      borderColor: '#374151',
+      shadowColor: '#FFF'
+    },
+    text: {
+      color: '#F9FAFB'
+    }
+  }
+};
+
+// Use in your component
+import { useColorScheme } from 'react-native';
+
+function MyComponent() {
+  const showToast = useToast();
+  const colorScheme = useColorScheme();
+  const theme = toastTheme[colorScheme || 'light'];
+
+  const showThemedToast = () => {
+    showToast({
+      message: 'Themed toast',
+      customStyle: theme.container,
+      messageStyle: theme.text
+    });
+  };
+
+  return <Button title="Show Toast" onPress={showThemedToast} />;
+}
+```
+
+## Complete Customization Example
+
+Here's a comprehensive example showing various customization options:
+
+```tsx
+import React from 'react';
+import { View, Button, StyleSheet, useColorScheme } from 'react-native';
+import { useToast } from 'react-native-animated-toast-alerts';
+import { Sparkles, Zap, Heart } from 'lucide-react-native';
+
+function CustomToastDemo() {
+  const showToast = useToast();
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+
+  const showGlassmorphicToast = () => {
+    showToast({
+      message: '✨ Glassmorphic design',
+      customStyle: {
+        backgroundColor: isDark
+          ? 'rgba(255, 255, 255, 0.1)'
+          : 'rgba(255, 255, 255, 0.7)',
+        backdropFilter: 'blur(10px)',
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: isDark
+          ? 'rgba(255, 255, 255, 0.2)'
+          : 'rgba(0, 0, 0, 0.1)',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.15,
+        shadowRadius: 16,
+        elevation: 8
+      },
+      messageStyle: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: isDark ? '#FFFFFF' : '#000000'
+      }
+    });
+  };
+
+  const showGradientToast = () => {
+    showToast({
+      message: '🎨 Gradient background',
+      icon: {
+        icon: Sparkles,
+        props: {
+          size: 24,
+          color: '#FFFFFF'
+        }
+      },
+      customStyle: {
+        backgroundColor: '#8B5CF6',
+        borderRadius: 16,
+        paddingHorizontal: 24,
+        paddingVertical: 14
+      },
+      messageStyle: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        fontWeight: '700'
+      }
+    });
+  };
+
+  const showMinimalToast = () => {
+    showToast({
+      message: 'Minimal design',
+      customStyle: {
+        backgroundColor: isDark ? '#18181B' : '#FAFAFA',
+        borderRadius: 8,
+        borderLeftWidth: 4,
+        borderLeftColor: '#3B82F6',
+        paddingHorizontal: 16,
+        paddingVertical: 12
+      },
+      messageStyle: {
+        fontSize: 14,
+        color: isDark ? '#FAFAFA' : '#18181B'
+      }
+    });
+  };
+
+  return (
+    <View style={styles.container}>
+      <Button
+        title="Glassmorphic Toast"
+        onPress={showGlassmorphicToast}
+      />
+      <Button
+        title="Gradient Toast"
+        onPress={showGradientToast}
+      />
+      <Button
+        title="Minimal Toast"
+        onPress={showMinimalToast}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+    gap: 16
+  }
+});
+
+export default CustomToastDemo;
+```
+
+## Styling Best Practices
+
+### Consistency
+
+- Maintain consistent styling across your app
+- Create reusable theme configurations
+- Use your app's design tokens (colors, spacing, typography)
+
+### Accessibility
+
+- Ensure sufficient color contrast
+- Use readable font sizes (minimum 14px)
+- Don't rely solely on color to convey meaning
+
+### Performance
+
+- Avoid complex shadows on lower-end devices
+- Keep animations smooth by using native driver when possible
+- Test on actual devices, not just simulators
+
+### Dark Mode
+
+- Always test both light and dark themes
+- Use semantic colors that adapt to theme
+- Ensure icons are visible in both modes
+
+## Next Steps
+
+- Check the [API Reference](/docs/api-reference) for all styling options
+- Explore [Advanced Usage](/docs/advanced) for complex scenarios
+- Learn about [TypeScript](/docs/typescript) integration for type-safe styling

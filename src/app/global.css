@@ -1,0 +1,25 @@
+@import 'tailwindcss';
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
+
+/* Custom header styling to match page background */
+header#nd-nav {
+    background: linear-gradient(to bottom right, rgb(239 246 255), rgb(255 255 255), rgb(250 245 255));
+    border-bottom: none;
+}
+
+html.dark header#nd-nav {
+    background: linear-gradient(to bottom right, rgb(3 7 18), rgb(17 24 39), rgb(3 7 18));
+    border-bottom: none;
+}
+
+/* Override the backdrop-blur container background */
+header#nd-nav .backdrop-blur-lg {
+    background: transparent !important;
+    border-bottom: none !important;
+}
+
+html.dark header#nd-nav .backdrop-blur-lg {
+    background: transparent !important;
+    border-bottom: none !important;
+}

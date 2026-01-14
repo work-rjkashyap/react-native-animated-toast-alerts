@@ -1,261 +1,45 @@
-# React Native Animated Toast
+# Fumadocs Project
 
-![TypeScript](https://img.shields.io/badge/TypeScript-90.3%25-blue)
-![Java](https://img.shields.io/badge/Java-9.7%25-orange)
-![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![NPM Version](https://img.shields.io/npm/v/react-native-animated-toast-alerts)
+This is a Next.js application generated with
+[Create Fumadocs](https://github.com/fuma-nama/fumadocs).
 
-A modern, highly customizable animated toast notification library for React Native featuring stacking animations, gesture support, and comprehensive TypeScript compatibility.
-
-<div align="center">
-  <img src="https://socialify.git.ci/work-rjkashyap/react-native-animated-toast-alerts/image?font=Raleway&forks=1&issues=1&language=1&name=1&owner=1&pulls=1&stargazers=1&theme=Light" alt="react-native-animated-toast-alerts" width="640" height="320" />
-
-  <p align="center">
-    <a href="#-installation">Installation</a> •
-    <a href="#-quick-start">Usage</a> •
-    <a href="#-customization">Customization</a> •
-    <a href="#-api-reference">API Reference</a>
-  </p>
-</div>
-
----
-
-## ✨ Features
-
-- 🎨 **Modern Design** - Clean, minimalist interface with smooth animations
-- 🔄 **Animated Stacking** - Beautiful entrance and exit animations with proper stacking
-- 🌓 **Theme Integration** - Seamless dark mode support with customizable themes
-- 📱 **Multiple Positions** - Support for top, bottom, and center positions
-- 👆 **Advanced Gestures** - Intuitive swipe-to-dismiss with natural physics
-- 💅 **Flexible Styling** - Extensive customization options for colors, icons, and animations
-- 🔧 **TypeScript Support** - Comprehensive type definitions for better development
-- ⚡ **Performance Optimized** - Efficient animations using React Native's Animated API
-- 🎁 **Icon Integration** - Seamless support for Lucide icons
-
----
-
-## 🚀 Installation
-
-### 1. Install the package and dependencies
+Run development server:
 
 ```bash
-# Using npm
-npm install react-native-animated-toast-alerts
-
-# Using yarn
-yarn add react-native-animated-toast-alerts
-
-# Using pnpm
-pnpm add react-native-animated-toast-alerts
+npm run dev
+# or
+pnpm dev
+# or
+yarn dev
 ```
 
-### 2. iOS Setup
+Open <http://localhost:3000> with your browser to see the result.
 
-Run the following command to install the required CocoaPods dependencies:
+## Explore
 
-```bash
-cd ios && pod install && cd ..
-```
+In the project, you can see:
 
----
+- `lib/source.ts`: Code for content source adapter, [`loader()`](https://fumadocs.dev/docs/headless/source-api) provides the interface to access your content.
+- `lib/layout.shared.tsx`: Shared options for layouts, optional but preferred to keep.
 
-## 🎯 Quick Start
+| Route                     | Description                                            |
+| ------------------------- | ------------------------------------------------------ |
+| `app/(home)`              | The route group for your landing page and other pages. |
+| `app/docs`                | The documentation layout and pages.                    |
+| `app/api/search/route.ts` | The Route Handler for search.                          |
 
-### Wrap your Application with the `ToastProvider`
+### Fumadocs MDX
 
-```typescript
-import { ToastProvider } from 'react-native-animated-toast-alerts';
+A `source.config.ts` config file has been included, you can customise different options like frontmatter schema.
 
-const App = () => {
-  return (
-    <ToastProvider>
-      <YourApp />
-    </ToastProvider>
-  );
-};
+Read the [Introduction](https://fumadocs.dev/docs/mdx) for further details.
 
-export default App;
-```
+## Learn More
 
-### Display a Toast
+To learn more about Next.js and Fumadocs, take a look at the following
+resources:
 
-```typescript
-import { useToast } from 'react-native-animated-toast-alerts';
-import { Camera } from 'lucide-react-native';
-
-const MyComponent = () => {
-  const showToast = useToast();
-
-  const handlePress = () => {
-    showToast({
-      type: 'success',
-      message: '✨ Operation completed!',
-      position: 'top',
-      icon: {
-        icon: Camera,
-        props: {
-          size: 24,
-          color: '#16A34A'
-        }
-      }
-    });
-  };
-
-  return <Button title="Show Toast" onPress={handlePress} />;
-};
-```
-
-### Manually Hide a Toast
-
-You can programmatically hide the currently active toast using the `.hide()` method on the returned function.
-
-```typescript
-const showToast = useToast();
-
-const performAction = async () => {
-  showToast({ message: "Loading...", duration: 0 }); // duration 0 to keep it open
-
-  await someAsyncWork();
-
-  showToast.hide(); // Hide the toast when done
-};
-```
-
----
-
-## 🎨 Toast Types
-
-### Predefined Toast Types
-
-```typescript
-// ℹ️ Info toast
-showToast({
-  type: "info",
-  message: "Updates available",
-});
-
-// ✅ Success toast
-showToast({
-  type: "success",
-  message: "Changes saved!",
-});
-
-// ❌ Error toast
-showToast({
-  type: "error",
-  message: "Something went wrong",
-});
-
-// ⚠️ Warning toast
-showToast({
-  type: "warning",
-  message: "Please review input",
-});
-```
-
----
-
-## 💅 Customization
-
-### Styling Options
-
-```typescript
-showToast({
-  type: "info",
-  message: "Custom styled toast",
-  position: "center",
-  customStyle: {
-    borderRadius: 12,
-    backgroundColor: "#F8FAFC",
-  },
-  messageStyle: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-});
-```
-
-### Custom Icons
-
-```typescript
-import { AlertCircle } from "lucide-react-native";
-
-showToast({
-  type: "info",
-  message: "Custom icon toast",
-  icon: {
-    icon: AlertCircle,
-    props: {
-      size: 24,
-      color: "#1D4ED8",
-      strokeWidth: 2,
-    },
-  },
-});
-```
-
----
-
-## 📚 API Reference
-
-### ToastOptions
-
-```typescript
-interface ToastOptions {
-  type?: "info" | "success" | "error" | "warning";
-  message: string;
-  duration?: number;
-  position?: "top" | "bottom";
-  icon?: ToastIcon;
-  customStyle?: StyleProp<ViewStyle>;
-  messageStyle?: StyleProp<TextStyle>;
-}
-
-type ToastIcon = {
-  icon: LucideIcon | React.ComponentType<any>;
-  props?: {
-    size?: number;
-    color?: string;
-    [key: string]: any;
-  };
-};
-```
-
----
-
-## 📱 Platform Specific Features
-
-The library provides optimized experiences for both platforms:
-
-- **iOS**: Native shadows, safe area handling, and smooth animations
-- **Android**: Material Design elevation and touch feedback
-- **Both**: Natural gesture interactions and proper theme integration
-
----
-
-## 🔧 Technical Requirements
-
-- React Native >= 0.63.0
-- React >= 16.8.0
-- TypeScript >= 4.0.0 (for TypeScript users)
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit issues and pull requests. For major changes, kindly open a discussion first.
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines and [DEVELOPMENT.md](DEVELOPMENT.md) for local development and build instructions.
-
----
-
-## 📄 License
-
-MIT © [Rajeshwar Kashyap](https://github.com/work-rjkashyap)
-
----
-
-<p align="center">
-  Made with ❤️ by Rajeshwar Kashyap
-</p>
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js
+  features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [Fumadocs](https://fumadocs.dev) - learn about Fumadocs

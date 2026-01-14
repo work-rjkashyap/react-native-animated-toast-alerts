@@ -1,0 +1,241 @@
+---
+title: Quick Start
+description: Display your first toast notification in minutes
+---
+
+# Quick Start
+
+This guide will help you display your first toast notification and understand the basic usage patterns.
+
+## Using the useToast Hook
+
+The `useToast` hook is the primary way to display toast notifications in your components.
+
+```tsx
+import { useToast } from 'react-native-animated-toast-alerts';
+import { Button, View } from 'react-native';
+
+function MyComponent() {
+  const showToast = useToast();
+
+  const handlePress = () => {
+    showToast({
+      type: 'success',
+      message: '✨ Operation completed successfully!',
+      position: 'top'
+    });
+  };
+
+  return (
+    <View>
+      <Button title="Show Toast" onPress={handlePress} />
+    </View>
+  );
+}
+```
+
+## Basic Options
+
+### Message
+
+The `message` is the only required option:
+
+```tsx
+showToast({
+  message: 'Hello, World!'
+});
+```
+
+### Toast Type
+
+Use predefined types for common scenarios:
+
+```tsx
+// Success toast
+showToast({
+  type: 'success',
+  message: 'Changes saved successfully!'
+});
+
+// Error toast
+showToast({
+  type: 'error',
+  message: 'Something went wrong'
+});
+
+// Warning toast
+showToast({
+  type: 'warning',
+  message: 'Please review your input'
+});
+
+// Info toast
+showToast({
+  type: 'info',
+  message: 'New updates available'
+});
+```
+
+### Position
+
+Control where the toast appears:
+
+```tsx
+// Top position (default)
+showToast({
+  message: 'Top toast',
+  position: 'top'
+});
+
+// Bottom position
+showToast({
+  message: 'Bottom toast',
+  position: 'bottom'
+});
+```
+
+### Duration
+
+Set how long the toast stays visible (in milliseconds):
+
+```tsx
+// Show for 5 seconds
+showToast({
+  message: 'This will disappear in 5 seconds',
+  duration: 5000
+});
+
+// Keep visible indefinitely (duration: 0)
+showToast({
+  message: 'This stays until manually dismissed',
+  duration: 0
+});
+```
+
+## Manually Hiding Toasts
+
+You can programmatically hide the currently active toast using the `.hide()` method:
+
+```tsx
+const showToast = useToast();
+
+const performAsyncAction = async () => {
+  // Show loading toast
+  showToast({
+    message: 'Loading...',
+    duration: 0 // Keep it visible
+  });
+
+  try {
+    await someAsyncOperation();
+
+    // Hide the loading toast
+    showToast.hide();
+
+    // Show success toast
+    showToast({
+      type: 'success',
+      message: 'Operation completed!'
+    });
+  } catch (error) {
+    showToast.hide();
+    showToast({
+      type: 'error',
+      message: 'Operation failed'
+    });
+  }
+};
+```
+
+## Custom Icons
+
+Add custom icons from Lucide React Native:
+
+```tsx
+import { Camera, Heart, Star } from 'lucide-react-native';
+
+showToast({
+  message: 'Photo captured!',
+  icon: {
+    icon: Camera,
+    props: {
+      size: 24,
+      color: '#16A34A'
+    }
+  }
+});
+```
+
+## Complete Example
+
+Here's a complete example showing various toast notifications:
+
+```tsx
+import React from 'react';
+import { View, Button, StyleSheet } from 'react-native';
+import { useToast } from 'react-native-animated-toast-alerts';
+import { Camera, Heart } from 'lucide-react-native';
+
+function ToastDemo() {
+  const showToast = useToast();
+
+  return (
+    <View style={styles.container}>
+      <Button
+        title="Success Toast"
+        onPress={() => showToast({
+          type: 'success',
+          message: '✅ Changes saved!',
+          position: 'top'
+        })}
+      />
+
+      <Button
+        title="Error Toast"
+        onPress={() => showToast({
+          type: 'error',
+          message: '❌ Something went wrong',
+          position: 'top'
+        })}
+      />
+
+      <Button
+        title="Custom Icon"
+        onPress={() => showToast({
+          message: '📸 Photo captured!',
+          icon: {
+            icon: Camera,
+            props: { size: 24, color: '#3B82F6' }
+          }
+        })}
+      />
+
+      <Button
+        title="Long Duration"
+        onPress={() => showToast({
+          type: 'info',
+          message: 'This toast stays for 10 seconds',
+          duration: 10000
+        })}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    gap: 16,
+    padding: 20
+  }
+});
+
+export default ToastDemo;
+```
+
+## Next Steps
+
+- Learn about [Toast Types](/docs/toast-types) for different notification styles
+- Explore [Customization](/docs/customization) options for styling
+- Check the [API Reference](/docs/api-reference) for all available options

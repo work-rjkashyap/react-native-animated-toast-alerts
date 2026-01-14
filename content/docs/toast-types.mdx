@@ -1,0 +1,237 @@
+---
+title: Toast Types
+description: Explore the different types of toast notifications available
+---
+
+# Toast Types
+
+react-native-animated-toast-alerts provides four predefined toast types, each with its own visual style and default icon.
+
+## Info Toast
+
+Use info toasts for general information or updates.
+
+```tsx
+showToast({
+  type: 'info',
+  message: 'New updates are available'
+});
+```
+
+**Default styling:**
+- Blue color scheme
+- Info icon (ℹ️)
+- Neutral, informative appearance
+
+**Common use cases:**
+- System notifications
+- Feature announcements
+- General information
+- Tips and hints
+
+## Success Toast
+
+Use success toasts to confirm successful operations.
+
+```tsx
+showToast({
+  type: 'success',
+  message: 'Changes saved successfully!'
+});
+```
+
+**Default styling:**
+- Green color scheme
+- Checkmark icon (✅)
+- Positive, affirming appearance
+
+**Common use cases:**
+- Successful form submissions
+- Completed operations
+- Saved changes
+- Successful uploads/downloads
+
+## Error Toast
+
+Use error toasts to alert users about problems or failures.
+
+```tsx
+showToast({
+  type: 'error',
+  message: 'Failed to save changes'
+});
+```
+
+**Default styling:**
+- Red color scheme
+- Error icon (❌)
+- Alert, attention-grabbing appearance
+
+**Common use cases:**
+- Failed operations
+- Validation errors
+- Network errors
+- Permission denials
+
+## Warning Toast
+
+Use warning toasts to caution users about potential issues.
+
+```tsx
+showToast({
+  type: 'warning',
+  message: 'Please review your input before submitting'
+});
+```
+
+**Default styling:**
+- Yellow/Orange color scheme
+- Warning icon (⚠️)
+- Cautionary appearance
+
+**Common use cases:**
+- Input validation warnings
+- Potential data loss alerts
+- Confirmation prompts
+- Deprecation notices
+
+## Complete Example
+
+Here's a component demonstrating all toast types:
+
+```tsx
+import React from 'react';
+import { View, Button, StyleSheet } from 'react-native';
+import { useToast } from 'react-native-animated-toast-alerts';
+
+function ToastTypesDemo() {
+  const showToast = useToast();
+
+  return (
+    <View style={styles.container}>
+      <Button
+        title="Show Info Toast"
+        onPress={() => showToast({
+          type: 'info',
+          message: 'ℹ️ New features are available in settings',
+          position: 'top'
+        })}
+        color="#3B82F6"
+      />
+
+      <Button
+        title="Show Success Toast"
+        onPress={() => showToast({
+          type: 'success',
+          message: '✅ Your profile has been updated',
+          position: 'top'
+        })}
+        color="#16A34A"
+      />
+
+      <Button
+        title="Show Error Toast"
+        onPress={() => showToast({
+          type: 'error',
+          message: '❌ Unable to connect to server',
+          position: 'top'
+        })}
+        color="#DC2626"
+      />
+
+      <Button
+        title="Show Warning Toast"
+        onPress={() => showToast({
+          type: 'warning',
+          message: '⚠️ Your session will expire in 5 minutes',
+          position: 'top'
+        })}
+        color="#F59E0B"
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+    gap: 16
+  }
+});
+
+export default ToastTypesDemo;
+```
+
+## Combining with Other Options
+
+Toast types can be combined with other options like custom icons, positions, and durations:
+
+```tsx
+// Success toast at bottom with custom duration
+showToast({
+  type: 'success',
+  message: 'File uploaded successfully',
+  position: 'bottom',
+  duration: 5000
+});
+
+// Error toast with custom icon
+import { AlertCircle } from 'lucide-react-native';
+
+showToast({
+  type: 'error',
+  message: 'Network connection lost',
+  icon: {
+    icon: AlertCircle,
+    props: {
+      size: 24,
+      color: '#DC2626'
+    }
+  }
+});
+
+// Warning toast with custom styling
+showToast({
+  type: 'warning',
+  message: 'Unsaved changes detected',
+  customStyle: {
+    borderRadius: 12,
+    paddingHorizontal: 20
+  },
+  messageStyle: {
+    fontSize: 16,
+    fontWeight: '600'
+  }
+});
+```
+
+## Best Practices
+
+### Choose the Right Type
+
+- **Info**: Neutral information that doesn't require action
+- **Success**: Confirm completed actions
+- **Error**: Alert about failures that need attention
+- **Warning**: Caution about potential issues
+
+### Message Guidelines
+
+- Keep messages concise and clear
+- Use action-oriented language
+- Include emojis for visual appeal (optional)
+- Avoid technical jargon
+
+### Duration Considerations
+
+- **Info**: 3-4 seconds (default)
+- **Success**: 2-3 seconds (quick confirmation)
+- **Error**: 5-6 seconds (users need time to read)
+- **Warning**: 4-5 seconds (important but not critical)
+
+## Next Steps
+
+- Learn about [Customization](/docs/customization) to override default styles
+- Check the [API Reference](/docs/api-reference) for all available options
+- Explore [Advanced Usage](/docs/advanced) for complex scenarios

@@ -1,0 +1,120 @@
+---
+title: Documentation
+description: Complete guide to using react-native-animated-toast-alerts
+---
+
+# React Native Animated Toast Alerts
+
+Welcome to the documentation for **react-native-animated-toast-alerts** - a modern, highly customizable animated toast notification library for React Native.
+
+## What is it?
+
+react-native-animated-toast-alerts brings beautiful, animated toast notifications to your React Native applications with:
+
+- 🎨 Modern, clean design with smooth animations
+- 🔄 Sonner-style stacking animations
+- 🌓 Seamless dark mode support
+- 📱 Multiple positioning options
+- 👆 Swipe-to-dismiss gestures
+- 💅 Extensive customization
+- 🔧 Full TypeScript support
+- ⚡ Performance optimized
+
+## Quick Links
+
+<Cards>
+  <Card title="Getting Started" href="/docs/getting-started" icon={<span>🚀</span>}>
+    Install and set up the library in your project
+  </Card>
+  <Card title="Quick Start" href="/docs/quick-start" icon={<span>⚡</span>}>
+    Display your first toast in minutes
+  </Card>
+  <Card title="Toast Types" href="/docs/toast-types" icon={<span>🎨</span>}>
+    Explore different toast notification styles
+  </Card>
+  <Card title="Customization" href="/docs/customization" icon={<span>💅</span>}>
+    Customize appearance and behavior
+  </Card>
+  <Card title="API Reference" href="/docs/api-reference" icon={<span>📚</span>}>
+    Complete API documentation
+  </Card>
+</Cards>
+
+## Installation
+
+```bash npm
+npm install react-native-animated-toast-alerts
+```
+
+```bash yarn
+yarn add react-native-animated-toast-alerts
+```
+
+```bash pnpm
+pnpm add react-native-animated-toast-alerts
+```
+
+## Basic Example
+
+```tsx
+import { ToastProvider, useToast } from 'react-native-animated-toast-alerts';
+
+function App() {
+  return (
+    <ToastProvider>
+      <YourApp />
+    </ToastProvider>
+  );
+}
+
+function MyComponent() {
+  const showToast = useToast();
+
+  const handlePress = () => {
+    showToast({
+      type: 'success',
+      message: '✨ Operation completed!',
+      position: 'top'
+    });
+  };
+
+  return <Button title="Show Toast" onPress={handlePress} />;
+}
+```
+
+## Features Overview
+
+### Modern Design
+Clean, minimalist interface with smooth animations and beautiful transitions that feel native to your app.
+
+### Animated Stacking
+Beautiful Sonner-style entrance and exit animations with proper stacking for multiple toasts.
+
+### Dark Mode Support
+Seamless integration with your app's theme, automatically adapting to light and dark modes.
+
+### Gesture Support
+Intuitive swipe-to-dismiss functionality with natural physics-based animations.
+
+### TypeScript First
+Comprehensive type definitions for a better development experience with full autocomplete support.
+
+### Highly Customizable
+Extensive customization options for colors, icons, positions, durations, and animations.
+
+## Community
+
+- [GitHub Repository](https://github.com/work-rjkashyap/react-native-animated-toast-alerts)
+- [Report Issues](https://github.com/work-rjkashyap/react-native-animated-toast-alerts/issues)
+- [Contribute](https://github.com/work-rjkashyap/react-native-animated-toast-alerts/blob/main/CONTRIBUTING.md)
+
+## License
+
+MIT © [Rajeshwar Kashyap](https://github.com/work-rjkashyap)
+
+## What is Next?
+
+<Cards>
+  <Card title="Learn more about Next.js" href="https://nextjs.org/docs" />
+  <Card title="Learn more about Fumadocs" href="https://fumadocs.dev" />
+</Cards>

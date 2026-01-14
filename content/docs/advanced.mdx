@@ -1,0 +1,434 @@
+---
+title: Advanced Usage
+description: Advanced patterns and techniques for react-native-animated-toast-alerts
+---
+
+# Advanced Usage
+
+Learn advanced patterns and techniques for using react-native-animated-toast-alerts in complex scenarios.
+
+## Queue Management
+
+The library automatically manages a queue of toasts. When multiple toasts are triggered, they stack beautifully with Sonner-style animations.
+
+```tsx
+import { useToast } from 'react-native-animated-toast-alerts';
+
+function MultipleToasts() {
+  const showToast = useToast();
+
+  const showMultiple = () => {
+    // These will stack automatically
+    showToast({
+      type: 'info',
+      message: 'First toast',
+      duration: 3000
+    });
+
+    setTimeout(() => {
+      showToast({
+        type: 'success',
+        message: 'Second toast',
+        duration: 3000
+      });
+    }, 500);
+
+    setTimeout(() => {
+      showToast({
+        type: 'warning',
+        message: 'Third toast',
+        duration: 3000
+      });
+    }, 1000);
+  };
+
+  return <Button title="Show Multiple" onPress={showMultiple} />;
+}
+```
+
+## Async Operations with Loading States
+
+Show loading toasts during async operations and update them based on the result:
+
+```tsx
+const handleAsyncOperation = async () => {
+  // Show loading toast
+  showToast({
+    message: 'Processing...',
+    duration: 0, // Keep it visible
+    customStyle: {
+      backgroundColor: '#F3F4F6'
+    }
+  });
+
+  try {
+    const result = await performAsyncTask();
+
+    // Hide loading toast
+    showToast.hide();
+
+    // Show success toast
+    showToast({
+      type: 'success',
+      message: `✅ ${result.message}`,
+      duration: 3000
+    });
+  } catch (error) {
+    // Hide loading toast
+    showToast.hide();
+
+    // Show error toast
+    showToast({
+      type: 'error',
+      message: `❌ ${error.message}`,
+      duration: 5000
+    });
+  }
+};
+```
+
+## Form Validation Feedback
+
+Use toasts to provide immediate feedback on form validation:
+
+```tsx
+import { useToast } from 'react-native-animated-toast-alerts';
+import { AlertCircle } from 'lucide-react-native';
+
+function FormWithValidation() {
+  const showToast = useToast();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const validateAndSubmit = () => {
+    // Email validation
+    if (!email.includes('@')) {
+      showToast({
+        type: 'error',
+        message: 'Please enter a valid email address',
+        icon: {
+          icon: AlertCircle,
+          props: { size: 24, color: '#DC2626' }
+        },
+        duration: 4000
+      });
+      return;
+    }
+
+    // Password validation
+    if (password.length < 8) {
+      showToast({
+        type: 'warning',
+        message: 'Password must be at least 8 characters',
+        duration: 4000
+      });
+      return;
+    }
+
+    // Submit form
+    handleSubmit();
+  };
+
+  return (
+    <View>
+      <TextInput
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+      />
+      <TextInput
+        placeholder="Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
+      <Button title="Submit" onPress={validateAndSubmit} />
+    </View>
+  );
+}
+```
+
+## Network Status Monitoring
+
+Monitor network connectivity and show appropriate toasts:
+
+```tsx
+import NetInfo from '@react-native-community/netinfo';
+import { useEffect } from 'react';
+
+function NetworkMonitor() {
+  const showToast = useToast();
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      if (!state.isConnected) {
+        showToast({
+          type: 'error',
+          message: '📡 No internet connection',
+          duration: 0, // Keep visible until reconnected
+          position: 'bottom'
+        });
+      } else {
+        showToast.hide();
+        showToast({
+          type: 'success',
+          message: '✅ Back online',
+          duration: 2000,
+          position: 'bottom'
+        });
+      }
+    });
+
+    return () => unsubscribe();
+  }, [showToast]);
+
+  return <YourApp />;
+}
+```
+
+## File Upload Progress
+
+Show progress updates during file uploads:
+
+```tsx
+const handleFileUpload = async (file: File) => {
+  showToast({
+    message: 'Uploading... 0%',
+    duration: 0
+  });
+
+  try {
+    await uploadFile(file, (progress) => {
+      // Update toast with progress
+      showToast.hide();
+      showToast({
+        message: `Uploading... ${Math.round(progress)}%`,
+        duration: 0
+      });
+    });
+
+    showToast.hide();
+    showToast({
+      type: 'success',
+      message: '✅ Upload complete!',
+      duration: 3000
+    });
+  } catch (error) {
+    showToast.hide();
+    showToast({
+      type: 'error',
+      message: '❌ Upload failed',
+      duration: 5000
+    });
+  }
+};
+```
+
+## Custom Toast Factory
+
+Create a factory function for consistent toast styling:
+
+```tsx
+import { useToast } from 'react-native-animated-toast-alerts';
+import { Camera, Heart, Star, Bell } from 'lucide-react-native';
+
+function useCustomToast() {
+  const showToast = useToast();
+
+  return {
+    success: (message: string) => {
+      showToast({
+        type: 'success',
+        message,
+        customStyle: {
+          backgroundColor: '#F0FDF4',
+          borderLeftWidth: 4,
+          borderLeftColor: '#16A34A',
+        },
+        messageStyle: {
+          color: '#166534',
+          fontWeight: '600',
+        },
+      });
+    },
+    error: (message: string) => {
+      showToast({
+        type: 'error',
+        message,
+        customStyle: {
+          backgroundColor: '#FEF2F2',
+          borderLeftWidth: 4,
+          borderLeftColor: '#DC2626',
+        },
+        messageStyle: {
+          color: '#991B1B',
+          fontWeight: '600',
+        },
+      });
+    },
+    photo: (message: string) => {
+      showToast({
+        message,
+        icon: {
+          icon: Camera,
+          props: { size: 24, color: '#3B82F6' }
+        },
+        customStyle: {
+          backgroundColor: '#EFF6FF',
+        },
+      });
+    },
+  };
+}
+
+// Usage
+function MyComponent() {
+  const toast = useCustomToast();
+
+  return (
+    <Button
+      title="Take Photo"
+      onPress={() => toast.photo('Photo captured!')}
+    />
+  );
+}
+```
+
+## Debouncing Toasts
+
+Prevent duplicate toasts from rapid user interactions:
+
+```tsx
+import { useRef } from 'react';
+
+function useDebouncedToast() {
+  const showToast = useToast();
+  const timeoutRef = useRef<NodeJS.Timeout>();
+
+  const debouncedToast = (options: ToastOptions, delay = 500) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      showToast(options);
+    }, delay);
+  };
+
+  return debouncedToast;
+}
+
+// Usage
+function MyComponent() {
+  const debouncedToast = useDebouncedToast();
+
+  const handleRapidClicks = () => {
+    // Only the last toast will show after 500ms
+    debouncedToast({
+      type: 'info',
+      message: 'Button clicked'
+    });
+  };
+
+  return <Button title="Click Me" onPress={handleRapidClicks} />;
+}
+```
+
+## Integration with State Management
+
+Use toasts with Redux or other state management:
+
+```tsx
+// Redux action
+export const saveData = (data) => async (dispatch) => {
+  dispatch({ type: 'SAVE_START' });
+
+  try {
+    await api.save(data);
+    dispatch({ type: 'SAVE_SUCCESS' });
+
+    // Show success toast
+    showToast({
+      type: 'success',
+      message: 'Data saved successfully'
+    });
+  } catch (error) {
+    dispatch({ type: 'SAVE_ERROR', error });
+
+    // Show error toast
+    showToast({
+      type: 'error',
+      message: error.message
+    });
+  }
+};
+```
+
+## Performance Optimization
+
+### Memoize Toast Options
+
+```tsx
+import { useMemo } from 'react';
+
+function OptimizedComponent() {
+  const showToast = useToast();
+
+  const toastOptions = useMemo(() => ({
+    type: 'success' as const,
+    message: 'Operation completed',
+    customStyle: {
+      backgroundColor: '#F0FDF4',
+    },
+  }), []);
+
+  const handlePress = () => {
+    showToast(toastOptions);
+  };
+
+  return <Button title="Show Toast" onPress={handlePress} />;
+}
+```
+
+### Avoid Creating Functions in Render
+
+```tsx
+// ❌ Bad - Creates new function on every render
+function BadExample() {
+  const showToast = useToast();
+
+  return (
+    <Button
+      title="Show"
+      onPress={() => showToast({ message: 'Hello' })}
+    />
+  );
+}
+
+// ✅ Good - Stable function reference
+function GoodExample() {
+  const showToast = useToast();
+
+  const handlePress = useCallback(() => {
+    showToast({ message: 'Hello' });
+  }, [showToast]);
+
+  return <Button title="Show" onPress={handlePress} />;
+}
+```
+
+## Best Practices
+
+1. **Use appropriate durations**: Longer for errors, shorter for success
+2. **Don't overuse toasts**: Too many toasts can be annoying
+3. **Provide actionable messages**: Tell users what happened and what to do
+4. **Use icons wisely**: Icons should enhance, not clutter
+5. **Test on real devices**: Animations may perform differently
+6. **Consider accessibility**: Ensure toasts are readable and accessible
+7. **Handle edge cases**: Network failures, timeouts, etc.
+
+## Next Steps
+
+- Check the [API Reference](/docs/api-reference) for all available options
+- Learn about [TypeScript](/docs/typescript) integration
+- Explore [Customization](/docs/customization) for styling options

@@ -1,0 +1,104 @@
+---
+title: Getting Started
+description: Learn how to install and set up react-native-animated-toast-alerts in your React Native project
+---
+
+# Getting Started
+
+Welcome to **react-native-animated-toast-alerts** - a modern, highly customizable animated toast notification library for React Native.
+
+## What is it?
+
+react-native-animated-toast-alerts is a toast notification library that brings beautiful, animated toast messages to your React Native applications. It features:
+
+- 🎨 **Modern Design** - Clean, minimalist interface with smooth animations
+- 🔄 **Animated Stacking** - Beautiful Sonner-style entrance and exit animations
+- 🌓 **Theme Integration** - Seamless dark mode support
+- 📱 **Multiple Positions** - Support for top, bottom, and center positions
+- 👆 **Advanced Gestures** - Intuitive swipe-to-dismiss functionality
+- 💅 **Flexible Styling** - Extensive customization options
+- 🔧 **TypeScript Support** - Comprehensive type definitions
+- ⚡ **Performance Optimized** - Efficient animations using React Native's Animated API
+
+## Installation
+
+### 1. Install the package
+
+Choose your preferred package manager:
+
+```bash npm
+npm install react-native-animated-toast-alerts
+```
+
+```bash yarn
+yarn add react-native-animated-toast-alerts
+```
+
+```bash pnpm
+pnpm add react-native-animated-toast-alerts
+```
+
+### 2. Install peer dependencies
+
+The library requires `react-native-svg` and `lucide-react-native` for icons:
+
+```bash npm
+npm install react-native-svg lucide-react-native
+```
+
+```bash yarn
+yarn add react-native-svg lucide-react-native
+```
+
+```bash pnpm
+pnpm add react-native-svg lucide-react-native
+```
+
+### 3. iOS Setup
+
+For iOS, you need to install the CocoaPods dependencies:
+
+```bash
+cd ios && pod install && cd ..
+```
+
+### 4. Android Setup
+
+No additional setup is required for Android. The library works out of the box!
+
+## Basic Setup
+
+Wrap your application with the `ToastProvider`:
+
+```tsx
+import { ToastProvider } from 'react-native-animated-toast-alerts';
+
+function App() {
+  return (
+    <ToastProvider>
+      <YourApp />
+    </ToastProvider>
+  );
+}
+
+export default App;
+```
+
+That's it! You're now ready to start using toast notifications in your app.
+
+## Next Steps
+
+<Cards>
+  <Card title="Quick Start" href="/docs/quick-start" icon={<span>🚀</span>}>
+    Learn how to display your first toast notification
+  </Card>
+  <Card title="Toast Types" href="/docs/toast-types" icon={<span>🎨</span>}>
+    Explore the different types of toasts available
+  </Card>
+  <Card title="Customization" href="/docs/customization" icon={<span>💅</span>}>
+    Customize the appearance and behavior of your toasts
+  </Card>
+  <Card title="API Reference" href="/docs/api-reference" icon={<span>📚</span>}>
+    Complete API documentation
+  </Card>
+</Cards>
