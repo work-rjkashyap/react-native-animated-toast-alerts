@@ -4,4 +4,13 @@ module.exports = {
   bracketSpacing: false,
   singleQuote: true,
   trailingComma: 'all',
+  overrides: [
+    {
+      files: '*.md',
+      options: {
+        proseWrap: 'preserve',
+        printWidth: 80,
+      },
+    },
+  ],
 };
