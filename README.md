@@ -1,4 +1,3 @@
-
 # React Native Animated Toast
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-90.3%25-blue)
@@ -164,7 +163,7 @@ showToast({
 ### Custom Icons
 
 ```typescript
-import { AlertCircle } from 'lucide-react-native';
+import {AlertCircle} from 'lucide-react-native';
 
 showToast({
   type: 'info',
@@ -174,9 +173,9 @@ showToast({
     props: {
       size: 24,
       color: '#1D4ED8',
-      strokeWidth: 2
-    }
-  }
+      strokeWidth: 2,
+    },
+  },
 });
 ```
 

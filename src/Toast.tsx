@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, {useEffect, useRef} from 'react';
 import {
   Animated,
   StyleSheet,
@@ -8,11 +8,17 @@ import {
   View,
   PanResponder,
 } from 'react-native';
-import { AlertCircle, CheckCircle, Info, XCircle, LucideIcon } from 'lucide-react-native';
-import { useToastTheme } from './ToastContext';
-import { ToastProps, ToastType } from './types';
+import {
+  AlertCircle,
+  CheckCircle,
+  Info,
+  XCircle,
+  LucideIcon,
+} from 'lucide-react-native';
+import {useToastTheme} from './ToastContext';
+import {ToastProps, ToastType} from './types';
 
-const { width } = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 const TOAST_HEIGHT = 55;
 const SWIPE_THRESHOLD = 50;
 const MAX_VISIBLE_TOASTS = 3;
@@ -29,9 +35,9 @@ export const Toast: React.FC<ToastProps> = ({
   index,
   visible,
 }) => {
-  const { theme, colorScheme } = useToastTheme();
+  const {theme, colorScheme} = useToastTheme();
   const translateY = useRef(
-    new Animated.Value(position === 'bottom' ? TOAST_HEIGHT : -TOAST_HEIGHT)
+    new Animated.Value(position === 'bottom' ? TOAST_HEIGHT : -TOAST_HEIGHT),
   ).current;
   const opacity = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(0.95)).current;
@@ -45,19 +51,23 @@ export const Toast: React.FC<ToastProps> = ({
 
       Animated.parallel([
         Animated.spring(translateY, {
-          toValue: isWithinViewLimit ? (offset * direction) : (position === 'bottom' ? TOAST_HEIGHT : -TOAST_HEIGHT),
+          toValue: isWithinViewLimit
+            ? offset * direction
+            : position === 'bottom'
+              ? TOAST_HEIGHT
+              : -TOAST_HEIGHT,
           useNativeDriver: true,
           tension: 70,
           friction: 12,
           velocity: 1,
         }),
         Animated.timing(opacity, {
-          toValue: isWithinViewLimit ? 1 - (index * 0.15) : 0,
+          toValue: isWithinViewLimit ? 1 - index * 0.15 : 0,
           duration: 150,
           useNativeDriver: true,
         }),
         Animated.spring(scale, {
-          toValue: isWithinViewLimit ? 1 - (index * 0.02) : 0.95,
+          toValue: isWithinViewLimit ? 1 - index * 0.02 : 0.95,
           useNativeDriver: true,
           tension: 100,
           friction: 10,
@@ -78,7 +88,7 @@ export const Toast: React.FC<ToastProps> = ({
         }),
       ]).start();
     }
-  }, [visible, index, position]);
+  }, [visible, index, position, opacity, scale, translateY]);
 
   const panResponder = useRef(
     PanResponder.create({
@@ -107,7 +117,7 @@ export const Toast: React.FC<ToastProps> = ({
           }).start();
         }
       },
-    })
+    }),
   ).current;
 
   const colors = theme[colorScheme][type];
@@ -136,11 +146,7 @@ export const Toast: React.FC<ToastProps> = ({
   };
 
   const animatedStyle = {
-    transform: [
-      { translateX: swipeX },
-      { translateY },
-      { scale },
-    ],
+    transform: [{translateX: swipeX}, {translateY}, {scale}],
     opacity,
     zIndex: 1000 - index,
   };
@@ -168,22 +174,14 @@ export const Toast: React.FC<ToastProps> = ({
         styles.container,
         getPositionStyle(),
         animatedStyle,
-        { backgroundColor: colors.background, borderColor: colors.border },
+        {backgroundColor: colors.background, borderColor: colors.border},
         customStyle,
-      ]}
-    >
+      ]}>
       <View style={styles.contentWrapper}>
-        <View style={styles.iconContainer}>
-          {renderIcon()}
-        </View>
+        <View style={styles.iconContainer}>{renderIcon()}</View>
         <Text
-          style={[
-            styles.message,
-            { color: colors.text },
-            messageStyle
-          ]}
-          numberOfLines={2}
-        >
+          style={[styles.message, {color: colors.text}, messageStyle]}
+          numberOfLines={2}>
           {message}
         </Text>
       </View>
@@ -202,7 +200,7 @@ const styles = StyleSheet.create({
     ...Platform.select({
       ios: {
         shadowColor: '#000000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: {width: 0, height: 2},
         shadowOpacity: 0.05,
         shadowRadius: 8,
       },

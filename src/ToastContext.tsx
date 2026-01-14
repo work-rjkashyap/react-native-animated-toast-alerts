@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useCallback, useState } from 'react';
-import { useColorScheme } from 'react-native';
-import { ToastContextType, ToastTheme, ToastProps, ToastOptions } from './types';
-import { defaultTheme } from './theme';
-import { Toast } from './Toast';
+import React, {createContext, useContext, useCallback, useState} from 'react';
+import {useColorScheme} from 'react-native';
+import {ToastContextType, ToastTheme, ToastProps, ToastOptions} from './types';
+import {defaultTheme} from './theme';
+import {Toast} from './Toast';
 
 const ToastContext = createContext<ToastContextType>({
   showToast: () => {},
@@ -10,26 +10,33 @@ const ToastContext = createContext<ToastContextType>({
 });
 const MAX_TOASTS = 5;
 
-export const ToastThemeContext = createContext<{ theme: ToastTheme; colorScheme: 'light' | 'dark' }>({
+export const ToastThemeContext = createContext<{
+  theme: ToastTheme;
+  colorScheme: 'light' | 'dark';
+}>({
   theme: defaultTheme,
   colorScheme: 'light',
 });
 
-export const ToastThemeProvider: React.FC<{ children: React.ReactNode; theme?: ToastTheme }> = ({
-  children,
-  theme = defaultTheme,
-}) => {
+export const ToastThemeProvider: React.FC<{
+  children: React.ReactNode;
+  theme?: ToastTheme;
+}> = ({children, theme = defaultTheme}) => {
   const colorScheme = useColorScheme() || 'light';
 
   return (
-    <ToastThemeContext.Provider value={{ theme, colorScheme }}>
+    <ToastThemeContext.Provider value={{theme, colorScheme}}>
       {children}
     </ToastThemeContext.Provider>
   );
 };
 
-export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [toasts, setToasts] = useState<(Omit<ToastProps, 'visible' | 'onHide'> & { id: string })[]>([]);
+export const ToastProvider: React.FC<{children: React.ReactNode}> = ({
+  children,
+}) => {
+  const [toasts, setToasts] = useState<
+    (Omit<ToastProps, 'visible' | 'onHide'> & {id: string})[]
+  >([]);
 
   const showToast = useCallback((options: ToastOptions) => {
     const id = Date.now().toString();
@@ -44,7 +51,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           icon: options.icon,
           customStyle: options.customStyle,
           messageStyle: options.messageStyle,
-        } as Omit<ToastProps, 'visible' | 'onHide'> & { id: string },
+        } as Omit<ToastProps, 'visible' | 'onHide'> & {id: string},
         ...prev,
       ].slice(0, MAX_TOASTS);
 
@@ -56,17 +63,17 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     if (options.duration !== undefined && options.duration > 0) {
       setTimeout(() => {
-        setToasts((prev) => prev.filter((toast) => toast.id !== id));
+        setToasts(prev => prev.filter(toast => toast.id !== id));
       }, options.duration);
     }
   }, []);
 
   const hideToast = useCallback(() => {
-    setToasts((prev) => prev.slice(1));
+    setToasts(prev => prev.slice(1));
   }, []);
 
   return (
-    <ToastContext.Provider value={{ showToast, hideToast }}>
+    <ToastContext.Provider value={{showToast, hideToast}}>
       {children}
       {toasts.map((toast, index) => (
         <Toast

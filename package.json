@@ -7,8 +7,16 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "prepare": "npm run build",
-    "clean": "rmdir lib"
+    "prepare": "husky && npm run build",
+    "clean": "rmdir lib",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
   "keywords": [
     "react-native",
@@ -23,18 +31,25 @@
   "author": "Rajeshwar Kashyap",
   "license": "MIT",
   "peerDependencies": {
+    "lucide-react-native": ">=0.469.0",
     "react": "*",
     "react-native": "*",
-    "react-native-svg": ">=13.0.0",
-    "lucide-react-native": ">=0.469.0"
+    "react-native-svg": ">=13.0.0"
   },
   "devDependencies": {
+    "@react-native/eslint-config": "^0.83.1",
     "@types/react": "^18.2.0",
     "@types/react-native": "^0.72.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "lucide-react-native": "^0.469.0",
+    "prettier": "^3.7.4",
     "react": "^18.2.0",
     "react-native": "^0.72.0",
-    "typescript": "^5.0.0",
     "react-native-svg": "^15.10.1",
-    "lucide-react-native": "^0.469.0"
+    "typescript": "^5.0.0"
   }
 }

@@ -4,10 +4,10 @@
 
 The following versions of **React Native Animated Toast Alerts** are actively supported with security updates:
 
-| Version | Supported          |
-|---------|--------------------|
-| 1.x     | ✅ Supported       |
-| < 1.0   | ❌ Not supported   |
+| Version | Supported        |
+| ------- | ---------------- |
+| 1.x     | ✅ Supported     |
+| < 1.0   | ❌ Not supported |
 
 ---
 
@@ -42,4 +42,3 @@ To minimize risks while using this library:
 ---
 
 Thank you for helping us maintain the security of **React Native Animated Toast Alerts**!
-

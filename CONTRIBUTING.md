@@ -31,6 +31,7 @@ Thank you for considering contributing to **React Native Animated Toast Alerts**
 ### 2. Install Dependencies
 
 Install the required dependencies using `npm` or `yarn`:
+
 ```bash
 npm install
 # or
@@ -40,6 +41,7 @@ yarn install
 ### 3. Run the Project
 
 Start the development environment to test your changes:
+
 ```bash
 npm start
 # or
@@ -63,6 +65,7 @@ yarn start
 ## 📄 Commit Messages
 
 Follow these guidelines for commit messages:
+
 - Use the present tense (e.g., "Add feature" not "Added feature").
 - Be concise but descriptive.
 - Reference issues when applicable (e.g., "Fix #123: Correct animation bug").
@@ -83,6 +86,7 @@ Follow these guidelines for commit messages:
 ## 🔍 Code Reviews
 
 All PRs will go through a review process:
+
 - Ensure your code is clean, efficient, and adheres to the project’s style.
 - Address any feedback provided by maintainers promptly.
 
@@ -91,6 +95,7 @@ All PRs will go through a review process:
 ## 🧪 Testing
 
 If you’re adding a new feature or fixing a bug, include tests to verify your changes. Run tests locally:
+
 ```bash
 npm test
 # or

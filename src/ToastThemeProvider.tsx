@@ -1,7 +1,7 @@
-import React, { createContext, useContext } from 'react';
-import { useColorScheme } from 'react-native';
-import {  defaultTheme } from './theme';
-import { ToastTheme } from './types';
+import React, {createContext, useContext} from 'react';
+import {useColorScheme} from 'react-native';
+import {defaultTheme} from './theme';
+import {ToastTheme} from './types';
 
 interface ToastThemeContextType {
   theme: ToastTheme;
@@ -25,7 +25,7 @@ export const ToastThemeProvider: React.FC<ToastThemeProviderProps> = ({
   const colorScheme = useColorScheme() || 'light';
 
   return (
-    <ToastThemeContext.Provider value={{ theme, colorScheme }}>
+    <ToastThemeContext.Provider value={{theme, colorScheme}}>
       {children}
     </ToastThemeContext.Provider>
   );
