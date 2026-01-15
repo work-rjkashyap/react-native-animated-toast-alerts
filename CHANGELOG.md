@@ -1,4 +1,13 @@
-# 0.1.0 (2026-01-14)
+# [2.1.0](https://github.com/work-rjkashyap/react-native-animated-toast-alerts/compare/v0.1.0...v2.1.0) (2026-01-15)
+
+
+### Features
+
+* remove Jekyll GitHub Pages deployment workflow ([ff8adb2](https://github.com/work-rjkashyap/react-native-animated-toast-alerts/commit/ff8adb2a70689400a3349165ad0cafd8b8cea5a9))
+
+
+
+# [0.1.0](https://github.com/work-rjkashyap/react-native-animated-toast-alerts/compare/caf3abf5f1d5d21628453d55db01b73cc78be38d...v0.1.0) (2026-01-14)
 
 
 ### Features
