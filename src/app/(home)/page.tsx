@@ -251,6 +251,38 @@ function App() {
                     </div>
                 </div>
             </section>
+
+            {/* Footer */}
+            <footer className="border-t border-gray-200 bg-white py-12 dark:border-gray-800 dark:bg-gray-950">
+                <div className="mx-auto max-w-7xl px-6 lg:px-8">
+                    <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
+                        <p className="text-sm leading-5 text-gray-500 dark:text-gray-400">
+                            &copy; {new Date().getFullYear()} Rajeshwar Kashyap. All rights reserved.
+                        </p>
+                        <p className="text-sm leading-5 text-gray-500 dark:text-gray-400">
+                            Built with{' '}
+                            <a
+                                href="https://www.fumadocs.dev"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="font-medium text-gray-900 hover:text-blue-600 dark:text-white dark:hover:text-blue-400"
+                            >
+                                Fumadocs
+                            </a>
+                            {', '}
+                            and{' '}
+                            <a
+                                href="https://nextjs.org"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="font-medium text-gray-900 hover:text-blue-600 dark:text-white dark:hover:text-blue-400"
+                            >
+                                Next.js
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 }
