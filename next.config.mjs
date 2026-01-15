@@ -6,6 +6,8 @@ const withMDX = createMDX();
 const config = {
   output: 'export',
   reactStrictMode: true,
+  basePath: '/react-native-animated-toast-alerts',
+  assetPrefix: '/react-native-animated-toast-alerts',
   images: {
     unoptimized: true,
   },

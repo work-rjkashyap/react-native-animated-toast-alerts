@@ -7,7 +7,7 @@ export function baseOptions(): BaseLayoutProps {
             title: (
                 <div className="flex items-center">
                     <Image
-                        src="/logo.png"
+                        src="/react-native-animated-toast-alerts/logo.png"
                         alt="React Native Animated Toast Logo"
                         width={100}
                         height={58}
