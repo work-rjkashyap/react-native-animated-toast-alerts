@@ -1,15 +1,25 @@
 @import 'tailwindcss';
-@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/purple.css';
 @import 'fumadocs-ui/css/preset.css';
+
+@theme {
+    --color-brand-blue: #253995;
+    --color-brand-purple: #7b4bb2;
+    --color-brand-orange: #df8555;
+
+    /* Override Fumadocs primary color */
+    --color-primary: var(--color-brand-purple);
+    --color-primary-foreground: white;
+}
 
 /* Custom header styling to match page background */
 header#nd-nav {
-    background: linear-gradient(to bottom right, rgb(239 246 255), rgb(255 255 255), rgb(250 245 255));
+    background: linear-gradient(to bottom right, color-mix(in srgb, var(--color-brand-blue) 5%, transparent), white, color-mix(in srgb, var(--color-brand-orange) 5%, transparent));
     border-bottom: none;
 }
 
 html.dark header#nd-nav {
-    background: linear-gradient(to bottom right, rgb(3 7 18), rgb(17 24 39), rgb(3 7 18));
+    background: linear-gradient(to bottom right, #030712, #111827, #030712);
     border-bottom: none;
 }
 

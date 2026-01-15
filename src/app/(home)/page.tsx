@@ -7,7 +7,7 @@ export default function HomePage() {
         <div className="flex flex-col">
             {/* Hero Section */}
             <section className="relative overflow-hidden border-b border-gray-200 dark:border-gray-800">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950" />
+                <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-brand-blue)]/5 via-white to-[var(--color-brand-orange)]/5 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950" />
 
                 <div className="relative mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8">
                     <div className="mx-auto max-w-2xl text-center">
@@ -18,7 +18,7 @@ export default function HomePage() {
 
                         <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-6xl">
                             Beautiful toast notifications
-                            <span className="block mt-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                            <span className="block mt-2 bg-gradient-to-r from-[var(--color-brand-blue)] via-[var(--color-brand-purple)] to-[var(--color-brand-orange)] bg-clip-text text-transparent">
                                 for React Native
                             </span>
                         </h1>
@@ -82,7 +82,7 @@ export default function HomePage() {
                             {/* Feature 1 */}
                             <div className="relative pl-16">
                                 <dt className="text-base font-semibold leading-7 text-gray-900 dark:text-white">
-                                    <div className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 dark:bg-blue-500">
+                                    <div className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--color-brand-blue)]">
                                         <Zap className="h-6 w-6 text-white" />
                                     </div>
                                     Animated Stacking
@@ -95,7 +95,7 @@ export default function HomePage() {
                             {/* Feature 2 */}
                             <div className="relative pl-16">
                                 <dt className="text-base font-semibold leading-7 text-gray-900 dark:text-white">
-                                    <div className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-purple-600 dark:bg-purple-500">
+                                    <div className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--color-brand-purple)]">
                                         <Hand className="h-6 w-6 text-white" />
                                     </div>
                                     Gesture Support
@@ -108,7 +108,7 @@ export default function HomePage() {
                             {/* Feature 3 */}
                             <div className="relative pl-16">
                                 <dt className="text-base font-semibold leading-7 text-gray-900 dark:text-white">
-                                    <div className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600 dark:bg-indigo-500">
+                                    <div className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--color-brand-blue)]/80">
                                         <Moon className="h-6 w-6 text-white" />
                                     </div>
                                     Dark Mode
@@ -121,7 +121,7 @@ export default function HomePage() {
                             {/* Feature 4 */}
                             <div className="relative pl-16">
                                 <dt className="text-base font-semibold leading-7 text-gray-900 dark:text-white">
-                                    <div className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-pink-600 dark:bg-pink-500">
+                                    <div className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--color-brand-orange)]">
                                         <Palette className="h-6 w-6 text-white" />
                                     </div>
                                     Highly Customizable
@@ -134,7 +134,7 @@ export default function HomePage() {
                             {/* Feature 5 */}
                             <div className="relative pl-16">
                                 <dt className="text-base font-semibold leading-7 text-gray-900 dark:text-white">
-                                    <div className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-orange-600 dark:bg-orange-500">
+                                    <div className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--color-brand-purple)]/80">
                                         <Code2 className="h-6 w-6 text-white" />
                                     </div>
                                     TypeScript First
@@ -147,7 +147,7 @@ export default function HomePage() {
                             {/* Feature 6 */}
                             <div className="relative pl-16">
                                 <dt className="text-base font-semibold leading-7 text-gray-900 dark:text-white">
-                                    <div className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-green-600 dark:bg-green-500">
+                                    <div className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--color-brand-orange)]/80">
                                         <Check className="h-6 w-6 text-white" />
                                     </div>
                                     Production Ready
@@ -211,7 +211,7 @@ function App() {
                         <div className="mt-8 text-center">
                             <Link
                                 href="/docs/quick-start"
-                                className="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+                                className="inline-flex items-center text-sm font-semibold text-[var(--color-brand-purple)] hover:text-[var(--color-brand-blue)] dark:text-[var(--color-brand-orange)]"
                             >
                                 View full documentation
                                 <ArrowRight className="ml-1 h-4 w-4" />
